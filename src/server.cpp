@@ -76,25 +76,17 @@ int main() {
         // respond to client
         vector<string> response = get_route(method, urlRoute, payload);
         string html_path = response[0];
-        string http_header = response[1];
-        
-        // char* http_header = render_static_file(html_path);
-        // printf("response: \n%s\n", http_header);
-
-        // char http_header[4096] = "HTTP/1.1 200 OK\r\n\r\n";
+        string http_header = response[1]; // HTTP status
         string response_data = render_static_file(html_path);
         http_header.append(response_data);
         http_header.erase(http_header.length() - 1);
         http_header.append("\r\n\r\n");
-        // strcat(http_header, response_data);
-        // strcat(http_header, "\r\n\r\n");
         cout << http_header << endl;
 
         send(client_socket, http_header.c_str(), sizeof(char) * http_header.length(), 0);
 
         // close connection
         close(client_socket);
-        // free(response_data);
     }
 
     return 0;

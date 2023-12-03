@@ -5,6 +5,15 @@
 #include "../include/auth.hpp"
 using namespace std;
 
+static int callback(void *data, int argc, char **argv, char **column) {
+    for (int i = 0; i < argc; i++) {
+        printf("%s = %s\n", column[i], argv[i] ? argv[i] : NULL);
+    }
+
+    printf("\n");
+    return 0;
+}
+
 string _register(string _username, string _password, string _confirm) {
     string username = split(_username, "=")[1];
     string password = split(_password, "=")[1];
@@ -50,5 +59,17 @@ string login(string _username, string _password) {
         cout << "Cannot open database" << endl;
         return "HTTP/1.1 500 Internal Server Error\r\n\r\n";
     }
+    sql = "SELECT * FROM users WHERE username = '";
+    sql.append(username);
+    sql.append("' AND password = '");
+    sql.append(password);
+    sql.append("';");
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        return "HTTP/1.1 500 Internal Server Error\r\n\r\n";
+    }
+    cout << "successfully logged in user " << username << endl;
+    sqlite3_close(db);
     return "HTTP/1.1 200 OK\r\n\r\n";
 }

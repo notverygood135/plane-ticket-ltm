@@ -23,17 +23,28 @@ vector<string> get(string route) {
 }
 
 vector<string> post(string route, string payload) {
+    string html_path = "templates/";
     vector<string> response;
     string status = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
     vector<string> params = split(payload, "&");
     if (route == "/register") {
         status = _register(params[0], params[1], params[2]);
+        if (status == "HTTP/1.1 200 OK\r\n\r\n") {
+            html_path.append(routes.at("/login"));
+        }
+        else {
+            html_path.append(routes.at("/register"));
+        }
     }
     else if (route == "/login") {
         status = login(params[0], params[1]);
+        if (status == "HTTP/1.1 200 OK\r\n\r\n") {
+            html_path.append(routes.at("/"));
+        }
+        else {
+            html_path.append(routes.at("/login"));
+        }
     }
-    string html_path = "templates/";
-    html_path.append(routes.at(route));
     html_path.append(".html");
     response.push_back(html_path);
     response.push_back(status);
