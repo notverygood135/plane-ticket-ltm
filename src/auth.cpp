@@ -5,12 +5,11 @@
 #include "../include/auth.hpp"
 using namespace std;
 
-static int callback(void *data, int argc, char **argv, char **column) {
-    for (int i = 0; i < argc; i++) {
-        printf("%s = %s\n", column[i], argv[i] ? argv[i] : NULL);
-    }
+int rows = 0;
 
-    printf("\n");
+static int loginCallback(void *data, int argc, char **argv, char **column) {
+    rows = argc;
+    cout << "records found: " << argc << endl;
     return 0;
 }
 
@@ -47,6 +46,7 @@ string _register(string _username, string _password, string _confirm) {
 }
 
 string login(string _username, string _password) {
+    rows = 0;
     string username = split(_username, "=")[1];
     string password = split(_password, "=")[1];
     sqlite3 *db;
@@ -64,10 +64,15 @@ string login(string _username, string _password) {
     sql.append("' AND password = '");
     sql.append(password);
     sql.append("';");
-    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    rc = sqlite3_exec(db, sql.c_str(), loginCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
         return "HTTP/1.1 500 Internal Server Error\r\n\r\n";
+    }
+    if (!rows) {
+        cout << "username or password is incorrect" << endl;
+        sqlite3_close(db);
+        return "HTTP/1.1 401 Unauthorized\r\n\r\n";
     }
     cout << "successfully logged in user " << username << endl;
     sqlite3_close(db);

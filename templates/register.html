@@ -2,11 +2,35 @@
 <html>
     <body>
         <h1>register</h1>
-        <form action="register" method="post">
-            <input type="text" name="username" id="username" placeholder="Username">
-            <input type="password" name="password" id="password" placeholder="Password">
-            <input type="password" name="confirm" id="confirm" placeholder="Confirm password">
-            <button type="submit">Submit</button>
-        </form>
+        <input type="text" name="username" id="username" placeholder="Username">
+        <input type="password" name="password" id="password" placeholder="Password">
+        <input type="password" name="confirm" id="confirm" placeholder="Confirm password">
+        <button type="button" onclick="submit()">Submit</button>
+        <script>
+            function submit() {
+                let username = document.getElementById("username").value;
+                let password = document.getElementById("password").value;
+                let confirm = document.getElementById("confirm").value;
+                console.log(`username: ${username}, password: ${password}`);
+                fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/html"
+                    },
+                    body: `username=${username}&password=${password}&confirm=${confirm}`
+                })
+                .then(response => {
+                    return(response.status);
+                })
+                .then(status => {
+                    if (status == 200) {
+                        window.location.replace("http://localhost:8001/login");
+                    }
+                    else {
+                        alert("Invalid username or password");
+                    }
+                })
+            }
+        </script>
     </body>
 </html>

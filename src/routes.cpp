@@ -23,42 +23,40 @@ vector<string> get(string route) {
 }
 
 vector<string> post(string route, string payload) {
-    string html_path = "templates/";
     vector<string> response;
     string status = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
     vector<string> params = split(payload, "&");
+
     if (route == "/register") {
         status = _register(params[0], params[1], params[2]);
         if (status == "HTTP/1.1 200 OK\r\n\r\n") {
-            html_path.append(routes.at("/login"));
+            response.push_back("OK");
         }
         else {
-            html_path.append(routes.at("/register"));
+            response.push_back("NOT OK");
         }
+        response.push_back(status);
     }
     else if (route == "/login") {
         status = login(params[0], params[1]);
         if (status == "HTTP/1.1 200 OK\r\n\r\n") {
-            html_path.append(routes.at("/"));
+            response.push_back(split(params[0], "=")[1]);
         }
         else {
-            html_path.append(routes.at("/login"));
+            response.push_back("");
         }
+        response.push_back(status);
     }
-    html_path.append(".html");
-    response.push_back(html_path);
-    response.push_back(status);
     return response;
 }
 
-vector<string> get_route(char* method, char* route, char* payload) {
-    printf("\nmethod: %s\nroute: %s\npayload: %s\n", method, route, payload);
-    string m(method), r(route), p(payload);
-    if (routes.find(r) != routes.end()) {
-        if (m == "GET") return get(r);
-        else if (m == "POST") return post(r, p);
+vector<string> get_route(string method, string route, string payload) {
+    cout << "method: " << method << ", route: " << route << ", payload: " << payload << endl;
+    if (routes.find(route) != routes.end()) {
+        if (method == "GET") return get(route);
+        else if (method == "POST") return post(route, payload);
     }
-    cout << "unknown route: " << r << endl;
+    cout << "unknown route: " << route << endl;
     vector<string> response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};
     return response;
 }

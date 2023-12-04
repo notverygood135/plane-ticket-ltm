@@ -11,6 +11,7 @@
 #include "../include/routes.hpp"
 #include <string>
 #include <iostream>
+#include "../include/utils.hpp"
 using namespace std;
 
 int main() {
@@ -31,58 +32,36 @@ int main() {
     int client_socket;
     while (true) {
         // receive request from client
-        char request[4096];
+        char _request[4096];
+        memset(_request, 0, sizeof(_request));
         client_socket = accept(server_socket, NULL, NULL);
-        recv(client_socket, request, sizeof(request), 0);
-        printf("request:\n%s\n", request);
+        recv(client_socket, _request, sizeof(_request), 0);
+        printf("request:\n%s\n", _request);
 
         // process the headers of the request
-        char *method = "";
-		char *urlRoute = "";
-        char *client_http_header = "";
-        char *payload = "";
+        string request(_request);
+        vector<string> request_parse = split(request, "\n");
+        string client_http_header = request_parse.front();
+        string payload = request_parse.back();
 
-		char *request_parse = strtok(request, "\n");
-        int request_parse_counter = 0;
-		while (request_parse != NULL) {
-            switch (request_parse_counter)
-            {
-            case 0:
-                client_http_header = request_parse;
-                break;
-            default:
-                payload = request_parse;
-                break;
-            }
-            request_parse = strtok(NULL, "\n");
-            request_parse_counter++;
-        }
-		
-		char *header_token = strtok(client_http_header, " ");
-		printf("\nheader_token: %s\n", header_token);
-
-		int header_parse_counter = 0;
-		while (header_token != NULL) {
-			switch (header_parse_counter) {
-				case 0:
-					method = header_token;
-				case 1:
-					urlRoute = header_token;
-			}
-			header_token = strtok(NULL, " ");
-			header_parse_counter++;
-		}
+        vector<string> client_http_header_parse = split(client_http_header, " ");
+        string method = client_http_header_parse[0];
+		string urlRoute = client_http_header_parse[1];
 
         // respond to client
         vector<string> response = get_route(method, urlRoute, payload);
         string html_path = response[0];
         string http_header = response[1]; // HTTP status
-        string response_data = render_static_file(html_path);
-        http_header.append(response_data);
-        http_header.erase(http_header.length() - 1);
+        if (html_path.find("html") != string::npos) { // if the response is of type html
+            string response_data = render_static_file(html_path);
+            http_header.append(response_data);
+            http_header.erase(http_header.length() - 1);
+        }
+        else {
+            http_header.append(html_path);
+        }
         http_header.append("\r\n\r\n");
         cout << http_header << endl;
-
         send(client_socket, http_header.c_str(), sizeof(char) * http_header.length(), 0);
 
         // close connection

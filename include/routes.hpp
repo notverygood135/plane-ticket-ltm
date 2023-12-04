@@ -2,4 +2,4 @@
 #include <vector>
 using namespace std;
 
-vector<string> get_route(char* method, char* route, char* payload);
+vector<string> get_route(string method, string route, string payload);
