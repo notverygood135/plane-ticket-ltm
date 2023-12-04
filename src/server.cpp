@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <unistd.h>
 
-#include "../include/response.hpp"
-#include "../include/routes.hpp"
 #include <string>
 #include <iostream>
+#include <chrono>
+
+#include "../include/response.hpp"
+#include "../include/routes.hpp"
 #include "../include/utils.hpp"
 using namespace std;
 
@@ -40,6 +41,7 @@ int main() {
 
         // process the headers of the request
         string request(_request);
+        log(request);
         vector<string> request_parse = split(request, "\n");
         string client_http_header = request_parse.front();
         string payload = request_parse.back();
@@ -61,7 +63,7 @@ int main() {
             http_header.append(html_path);
         }
         http_header.append("\r\n\r\n");
-        cout << http_header << endl;
+        log(http_header);
         send(client_socket, http_header.c_str(), sizeof(char) * http_header.length(), 0);
 
         // close connection
