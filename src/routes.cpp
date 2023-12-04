@@ -9,7 +9,8 @@ using namespace std;
 unordered_map<string, string> routes = { 
     {"/", "index"}, 
     {"/login", "login"}, 
-    {"/register", "register"}
+    {"/register", "register"},
+    {"/home", "home"}
 };
 
 vector<string> get(string route) {

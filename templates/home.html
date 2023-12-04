@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>hello <span id="username"></span></h1>
+        <a href="http://localhost:8001" onclick="logout()">logout</a>
+    </body>
+    <script>
+        let username = localStorage.getItem("username");
+        document.getElementById("username").innerHTML = username;
+
+        function logout() {
+            localStorage.clear();
+        }
+    </script>
+</html>
