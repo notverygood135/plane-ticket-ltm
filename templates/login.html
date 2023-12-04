@@ -21,8 +21,10 @@
                     return(response.text());
                 })
                 .then(data => {
-                    if (data != "\r\n\r\n") {
+                    data = data.slice(0, -4)
+                    if (data != "") {
                         window.location.replace("http://localhost:8001");
+                        window.localStorage.setItem("username", data);
                     }
                     else {
                         alert("Invalid username or password");
