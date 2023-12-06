@@ -2,4 +2,4 @@
 #include <vector>
 using namespace std;
 
-vector<string> get_route(string method, string route, string payload);
+vector<string> req(string method, string route, string payload);

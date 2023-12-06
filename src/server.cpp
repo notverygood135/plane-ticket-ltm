@@ -51,16 +51,16 @@ int main() {
 		string urlRoute = client_http_header_parse[1];
 
         // respond to client
-        vector<string> response = get_route(method, urlRoute, payload);
-        string html_path = response[0];
+        vector<string> response = req(method, urlRoute, payload);
+        string html_path = response[0]; // html path or response from request
         string http_header = response[1]; // HTTP status
-        if (html_path.find("html") != string::npos) { // if the response is of type html
-            string response_data = render_static_file(html_path);
+        if (html_path.find("html") != string::npos || html_path.find("css") != string::npos) { // if the response is of type html
+            string response_data = render_static_file(html_path); // render the html page
             http_header.append(response_data);
             http_header.erase(http_header.length() - 1);
         }
         else {
-            http_header.append(html_path);
+            http_header.append(html_path); // response from the server
         }
         http_header.append("\r\n\r\n");
         log(http_header);
