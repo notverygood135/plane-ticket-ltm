@@ -52,8 +52,8 @@ int main() {
 
         // respond to client
         vector<string> response = req(method, urlRoute, payload);
-        string html_path = response[0]; // html path or response from request
-        string http_header = response[1]; // HTTP status
+        string http_header = response[0]; // HTTP status
+        string html_path = response[1]; // html path or response from request
         if (html_path.find("html") != string::npos || html_path.find("css") != string::npos) { // if the response is of type html
             string response_data = render_static_file(html_path); // render the html page
             http_header.append(response_data);

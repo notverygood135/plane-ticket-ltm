@@ -7,7 +7,7 @@ using namespace std;
 
 int rows = 0;
 
-static int loginCallback(void *data, int argc, char **argv, char **column) {
+static int callback(void *data, int argc, char **argv, char **column) {
     rows = argc;
     cout << "records found: " << argc << endl;
     return 0;
@@ -64,7 +64,7 @@ string login(string _username, string _password) {
     sql.append("' AND password = '");
     sql.append(password);
     sql.append("';");
-    rc = sqlite3_exec(db, sql.c_str(), loginCallback, NULL, &err_msg);
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
         return "HTTP/1.1 500 Internal Server Error\r\n\r\n";
