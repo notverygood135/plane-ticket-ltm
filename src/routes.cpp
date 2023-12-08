@@ -16,7 +16,6 @@ unordered_map<string, string> template_routes = {
 
 vector<string> get(string route) {
     vector<string> response;
-    string status = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
     if (template_routes.find(route) != template_routes.end()) {
         string html_path = "templates/";
         html_path.append(template_routes.at(route));
@@ -26,14 +25,7 @@ vector<string> get(string route) {
         return response;
     }
     if (route == "/flights") {
-        status = get_flights();
-        response.push_back(status);
-        if (status == "HTTP/1.1 200 OK\r\n\r\n") {
-            response.push_back("OK");
-        }
-        else {
-            response.push_back("NOT OK");
-        }
+        response = get_flights();
     }
     return response;
 }
