@@ -3,6 +3,7 @@
     <body>
         <h1>hello <span id="username"></span></h1>
         <a href="http://localhost:8001" onclick="logout()">logout</a>
+        <ul id="flights"></ul>
     </body>
     <script>
         let username = localStorage.getItem("username");
@@ -19,7 +20,18 @@
             return(response.text());
         })
         .then(data => {
-            console.log(JSON.parse(data));
+            const ul = document.getElementById("flights");
+            data = JSON.parse(data);
+            data.forEach(flight => {
+                const li = document.createElement("li");
+                li.className = "flight";
+                for (const key in flight) {
+                    const span = document.createElement("span");
+                    span.textContent = flight[key];
+                    li.appendChild(span);
+                }
+                ul.appendChild(li);
+            });
         })
     </script>
 </html>
