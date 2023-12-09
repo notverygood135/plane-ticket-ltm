@@ -38,6 +38,10 @@ int main() {
         client_socket = accept(server_socket, NULL, NULL);
         recv(client_socket, _request, sizeof(_request), 0);
         printf("request:\n%s\n", _request);
+        if (!strcmp(_request, "\0")) {
+            cout << "empty request" << endl;
+            continue;
+        };
 
         // process the headers of the request
         string request(_request);

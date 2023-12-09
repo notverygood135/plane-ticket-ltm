@@ -23,7 +23,7 @@
                 .then(data => {
                     data = data.slice(0, -4)
                     if (data != "NOT OK") {
-                        window.location.replace("http://localhost:8001/home");
+                        window.location.replace("http://localhost:8001");
                         localStorage.setItem("username", data);
                     }
                     else {

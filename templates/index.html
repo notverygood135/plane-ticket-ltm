@@ -2,8 +2,70 @@
 <html>
     <link rel="stylesheet" href="../static/index.css">
     <body>
-        <h1>hello world</h1>
-        <a href="http://localhost:8001/login">login</a>
-        <a href="http://localhost:8001/register">register</a>
+        <h1>hello <span id="username"></span></h1>
+
+        <a href="http://localhost:8001/login" class="auth">login</a>
+        <a href="http://localhost:8001/register" class="auth">register</a>
+        <a href="http://localhost:8001" onclick="logout()" id="logout">logout</a>
+
+        <div id="flights-info">
+            <div id="flights-search">
+                <input type="text" name="from" id="from" placeholder="From">
+                <input type="text" name="to" id="to" placeholder="To">
+                <input type="date" name="date" id="date" placeholder="Date">
+                <button type="button" onclick="filter()">Filter</button>
+            </div>
+            <ul id="flights"></ul>
+        </div>
+
     </body>
+
+    <script>
+        let username = localStorage.getItem("username");
+        let authElements = document.querySelectorAll(".auth");
+        let logoutElement = document.getElementById("logout");
+        if (username != null) {
+            document.getElementById("username").innerHTML = username;
+            authElements.forEach(item => item.style.display = "none");
+            logoutElement.style.display = "block";
+        }
+        else {
+            authElements.forEach(item => item.style.display = "block");
+            logoutElement.style.display = "none";
+        }
+
+        function logout() {
+            localStorage.clear();
+        }
+
+        function filter() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+            let date = document.getElementById("date").value;
+            console.log(`from: ${from}, to: ${to}, date: ${date}`);
+        }
+
+        fetch("/flights", {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const ul = document.getElementById("flights");
+            data = JSON.parse(data);
+            data.forEach(flight => {
+                const li = document.createElement("li");
+                li.className = "flight";
+                for (const key in flight) {
+                    const span = document.createElement("span");
+                    span.textContent = flight[key];
+                    li.appendChild(span);
+                }
+                ul.appendChild(li);
+            });
+            return data;
+        })
+    </script>
 </html>

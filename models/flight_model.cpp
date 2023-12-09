@@ -8,7 +8,7 @@
 using namespace std;
 
 int flight_row_count = 0;
-string flight_rows = "[";
+string flight_rows;
 
 static int callback(void *data, int argc, char **argv, char **column) {
     string row;
@@ -38,7 +38,9 @@ static int callback(void *data, int argc, char **argv, char **column) {
 }
 
 vector<string> get_flights() {
+    cout << "get_flights called" << endl;
     flight_row_count = 0;
+    flight_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;
     int rc;
