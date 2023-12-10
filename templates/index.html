@@ -12,6 +12,7 @@
             <div id="flights-search">
                 <input type="text" name="from" id="from" placeholder="From">
                 <input type="text" name="to" id="to" placeholder="To">
+                <input type="airline" name="airline" id="airline" placeholder="Airline">
                 <input type="date" name="date" id="date" placeholder="Date">
                 <button type="button" onclick="filter()">Filter</button>
             </div>
@@ -46,6 +47,7 @@
         function filter() {
             let from = document.getElementById("from").value;
             let to = document.getElementById("to").value;
+            let airline = document.getElementById("airline").value;
             let date = document.getElementById("date").value;
             filteredFlights = flights;
             console.log(`from: ${from}, to: ${to}, date: ${date}`);
@@ -56,6 +58,10 @@
             if (to != "") {
                 filteredFlights = filteredFlights.filter(flight => 
                     flight.to.includes(to));
+            }
+            if (airline != "") {
+                filteredFlights = filteredFlights.filter(flight => 
+                    flight.airline.includes(airline));
             }
             if (date != "") {
                 filteredFlights = filteredFlights.filter(flight => 
