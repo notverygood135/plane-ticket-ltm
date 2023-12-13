@@ -82,6 +82,10 @@
                     span.textContent = flight[key];
                     li.appendChild(span);
                 }
+                const a = document.createElement("a");
+                a.setAttribute("href", `http://localhost:8001/tickets/${flight.flight_id}`);
+                a.textContent = "tickets";
+                li.appendChild(a);
                 ul.appendChild(li);
             });
         }
