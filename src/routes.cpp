@@ -60,14 +60,17 @@ vector<string> post(string route, string payload) {
 vector<string> req(string method, string route, string payload) {
     cout << "method: " << method << ", route: " << route << ", payload: " << payload << endl;
     vector<string> response;
-    // if the client is requesting a css file
+    // neu client yeu cau file css
     if (route.find("css") != string::npos) {
         route = route.substr(1, route.length() - 1);
-        response = {route, "HTTP/1.1 200 OK\r\n\r\n"};
+        response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+        response.push_back(route);
         return response;
     }
+
     if (method == "GET") return get(route);
     else if (method == "POST") return post(route, payload);
+
     cout << "unknown route: " << route << endl;
     response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};
     return response;
