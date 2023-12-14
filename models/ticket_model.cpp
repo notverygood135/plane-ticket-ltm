@@ -7,12 +7,12 @@
 #include "../include/model.hpp"
 using namespace std;
 
-int flight_row_count = 0;
-string flight_rows;
+int ticket_row_count = 0;
+string ticket_rows;
 
 static int callback(void *data, int argc, char **argv, char **column) {
     string row;
-    if (flight_row_count > 0) {
+    if (ticket_row_count > 0) {
         row = ", {";
     }
     else {
@@ -32,15 +32,15 @@ static int callback(void *data, int argc, char **argv, char **column) {
     }
     row.append("}");
     printf("\n");
-    flight_rows.append(row);
-    flight_row_count++;
+    ticket_rows.append(row);
+    ticket_row_count++;
     return 0;
 }
 
-vector<string> get_flights() {
-    cout << "get_flights called" << endl;
-    flight_row_count = 0;
-    flight_rows = "[";
+vector<string> get_tickets() {
+    cout << "get_tickets called" << endl;
+    ticket_row_count = 0;
+    ticket_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;
     int rc;
@@ -54,7 +54,7 @@ vector<string> get_flights() {
         response.push_back("");
         return response;
     }
-    sql = "SELECT * FROM flights;";
+    sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id;";
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -62,10 +62,10 @@ vector<string> get_flights() {
         response.push_back("");
         return response;
     }
-    flight_rows.append("]");
+    ticket_rows.append("]");
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
-    response.push_back(flight_rows);
-    cout << flight_rows << endl;
+    response.push_back(ticket_rows);
+    cout << ticket_rows << endl;
     return response;
 }

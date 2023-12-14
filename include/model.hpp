@@ -2,4 +2,4 @@
 #include <vector>
 using namespace std;
 
-vector<string> get_flights();
+vector<string> get_tickets();

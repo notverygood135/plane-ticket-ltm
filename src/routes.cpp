@@ -23,8 +23,8 @@ vector<string> get(string route) {
         response.push_back(html_path);
         return response;
     }
-    if (route == "/flights") {
-        response = get_flights();
+    if (route == "/tickets") {
+        response = get_tickets();
     }
     return response;
 }

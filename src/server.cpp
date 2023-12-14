@@ -30,6 +30,8 @@ int main() {
 
     listen(server_socket, 5);
 
+    cout << "server listening on port 8001" << endl;
+
     int client_socket;
     while (true) {
         // receive request from client
