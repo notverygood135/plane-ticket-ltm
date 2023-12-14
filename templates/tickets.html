@@ -4,7 +4,16 @@
 
     </body>
     <script>
-        let route = window.location;
-        console.log(window.location);
+        const url = window.location.pathname;
+        const id = url.split("/")[2];
+        fetch("/tickets/1", {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+        })
     </script>
 </html>
