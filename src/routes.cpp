@@ -23,13 +23,8 @@ vector<string> get(string route) {
         response.push_back(html_path);
         return response;
     }
-    if (route == "/flights") {
-        response = get_flights();
-    }
-    else if (route.find("tickets") != string::npos) {
-        cout << route << endl;
-        response.push_back("HTTP/1.1 200 OK\r\n\r\n");
-        response.push_back("templates/tickets.html");
+    if (route == "/tickets") {
+        response = get_tickets();
     }
     return response;
 }
