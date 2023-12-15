@@ -26,6 +26,19 @@ vector<string> get(string route) {
     if (route == "/tickets") {
         response = get_tickets();
     }
+    else if (route.find("buy") != string::npos) {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/buy.html"};
+    }
+    else if (route.find("ticket") != string::npos) {
+        vector<string> route_parse = split(route, "/");
+        string id = route_parse[route_parse.size() - 1];
+        cout << id << endl;
+        response = get_ticket(id);
+    }
+    else {
+        cout << "unknown route: " << route << endl;
+        response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
+    }
     return response;
 }
 
@@ -67,11 +80,9 @@ vector<string> req(string method, string route, string payload) {
         response.push_back(route);
         return response;
     }
-
     if (method == "GET") return get(route);
     else if (method == "POST") return post(route, payload);
-
-    cout << "unknown route: " << route << endl;
+    cout << "unknown method: " << route << endl;
     response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};
     return response;
 }

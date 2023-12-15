@@ -10,7 +10,7 @@ using namespace std;
 int ticket_row_count = 0;
 string ticket_rows;
 
-static int callback(void *data, int argc, char **argv, char **column) {
+static int ticketsCallback(void *data, int argc, char **argv, char **column) {
     string row;
     if (ticket_row_count > 0) {
         row = ", {";
@@ -37,8 +37,28 @@ static int callback(void *data, int argc, char **argv, char **column) {
     return 0;
 }
 
+static int ticketCallback(void *data, int argc, char **argv, char **column) {
+    string row = "{";
+    for (int i = 0; i < argc; i++) {
+        printf("%s = %s\n", column[i], argv[i] ? argv[i] : "null");
+        row.append("\"");
+        row.append(column[i]);
+        row.append("\"");
+        row.append(": \"");
+        row.append(argv[i]);
+        row.append("\"");
+        if (i < argc - 1) {
+            row.append(", ");
+        }
+    }
+    row.append("}");
+    printf("\n");
+    ticket_rows.append(row);
+    ticket_row_count++;
+    return 0;
+}
+
 vector<string> get_tickets() {
-    cout << "get_tickets called" << endl;
     ticket_row_count = 0;
     ticket_rows = "[";
     sqlite3 *db;
@@ -55,7 +75,40 @@ vector<string> get_tickets() {
         return response;
     }
     sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id;";
-    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    ticket_rows.append("]");
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(ticket_rows);
+    cout << ticket_rows << endl;
+    return response;
+}
+
+vector<string> get_ticket(string id) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    ticket_rows = "[";
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE ticket_id = ";
+    sql.append(id);
+    sql.append(";");
+    rc = sqlite3_exec(db, sql.c_str(), ticketCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
         response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");

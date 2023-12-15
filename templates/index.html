@@ -92,6 +92,10 @@
                     span.textContent = ticket[key];
                     li.appendChild(span);
                 }
+                const a = document.createElement("a");
+                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
+                a.innerHTML = "Buy";
+                li.appendChild(a);
                 ul.appendChild(li);
             });
         }
