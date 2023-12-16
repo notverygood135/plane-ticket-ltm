@@ -1,5 +1,5 @@
 #include <string>
 using namespace std;
 
-string _register(string username, string password, string confirm);
-string login(string username, string password);
+vector<string> create_user(string username, string password, string confirm);
+vector<string> login(string username, string password);

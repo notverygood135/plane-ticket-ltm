@@ -44,28 +44,16 @@ vector<string> get(string route) {
 
 vector<string> post(string route, string payload) {
     vector<string> response;
-    string status = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
     vector<string> params = split(payload, "&");
 
     if (route == "/register") {
-        status = _register(params[0], params[1], params[2]);
-        response.push_back(status);
-        if (status == "HTTP/1.1 200 OK\r\n\r\n") {
-            response.push_back("OK");
-        }
-        else {
-            response.push_back("NOT OK");
-        }
+        return create_user(params[0], params[1], params[2]);
     }
-    else if (route == "/login") {
-        status = login(params[0], params[1]);
-        response.push_back(status);
-        if (status == "HTTP/1.1 200 OK\r\n\r\n") {
-            response.push_back(split(params[0], "=")[1]);
-        }
-        else {
-            response.push_back("NOT OK");
-        }
+    if (route == "/login") {
+        response = login(params[0], params[1]);
+    }
+    else if (route == "/buy") {
+        response = create_ownership(params[0], params[1]);
     }
     return response;
 }
