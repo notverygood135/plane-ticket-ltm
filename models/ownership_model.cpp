@@ -13,9 +13,13 @@ static int callback(void *data, int argc, char **argv, char **column) {
     return 0;
 }
 
-vector<string> create_ownership(string _username, string _ticket_id) {
+vector<string> create_ownership(string _username, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date) {
     string username = split(_username, "=")[1];
     string ticket_id = split(_ticket_id, "=")[1];
+    string full_name = split(_full_name, "=")[1];
+    string number = split(_number, "=")[1];
+    string security_code = split(_security_code, "=")[1];
+    string expiration_date = split(_expiration_date, "=")[1];
     
     sqlite3 *db;
     char *err_msg = 0;
@@ -34,6 +38,14 @@ vector<string> create_ownership(string _username, string _ticket_id) {
     sql.append(username);
     sql.append("', '");
     sql.append(ticket_id);
+    sql.append("', '");
+    sql.append(full_name);
+    sql.append("', '");
+    sql.append(number);
+    sql.append("', '");
+    sql.append(security_code);
+    sql.append("', '");
+    sql.append(expiration_date);
     sql.append("');");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);

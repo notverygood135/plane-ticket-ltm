@@ -53,7 +53,7 @@ vector<string> post(string route, string payload) {
         response = login(params[0], params[1]);
     }
     else if (route == "/buy") {
-        response = create_ownership(params[0], params[1]);
+        response = create_ownership(params[0], params[1], params[2], params[3], params[4], params[5]);
     }
     return response;
 }
