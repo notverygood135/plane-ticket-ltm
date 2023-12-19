@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/index.css">
     <body>
-        <h1>hello <span id="username"></span></h1>
+        <h1><span id="username"></span>'s tickets</h1>
 
-        <a href="http://localhost:8001/login" class="auth">login</a>
-        <a href="http://localhost:8001/register" class="auth">register</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        <a href="http://localhost:8001">home</a>
 
         <div id="tickets-info">
             <div id="tickets-search">
@@ -30,31 +26,16 @@
             </div>
             <ul id="tickets"></ul>
         </div>
-
     </body>
-
     <script>
+        const username = localStorage.getItem("username");
+        if (username == null) {
+            window.location = "http://localhost:8001/login"
+        }
+        document.getElementById("username").innerHTML = username;
+        
         let tickets = [];
         let filteredTickets = [];
-
-        // hien thi elements tuy thuoc vao trang thai dang nhap
-        let username = localStorage.getItem("username");
-        let authElements = document.querySelectorAll(".auth");
-        let navElements = document.querySelectorAll(".nav");
-        if (username != null) {
-            document.getElementById("username").innerHTML = username;
-            authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "block");
-        }
-        else {
-            authElements.forEach(item => item.style.display = "block");
-            navElements.forEach(item => item.style.display = "none");
-        }
-
-        // xoa data nguoi dung duoc luu trong ls
-        function logout() {
-            localStorage.clear();
-        }
 
         function filter() {
             let from = document.getElementById("from").value;
@@ -93,15 +74,11 @@
                     span.textContent = ticket[key];
                     li.appendChild(span);
                 }
-                const a = document.createElement("a");
-                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
-                a.innerHTML = "Buy";
-                li.appendChild(a);
                 ul.appendChild(li);
             });
         }
 
-        fetch("/tickets", {
+        fetch(`/inventory/${username}`, {
             method: "GET",
         })
         .then(response => {

@@ -74,7 +74,42 @@ vector<string> get_tickets() {
         response.push_back("");
         return response;
     }
-    sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id;";
+    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price from flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE tickets.ticket_id NOT IN (SELECT ticket_id FROM own);";
+    rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    ticket_rows.append("]");
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(ticket_rows);
+    cout << ticket_rows << endl;
+    return response;
+}
+
+vector<string> get_owned_tickets(string username) {
+        ticket_row_count = 0;
+    ticket_rows = "[";
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.username = \"";
+    sql.append(username);
+    sql.append("\";");
+    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;

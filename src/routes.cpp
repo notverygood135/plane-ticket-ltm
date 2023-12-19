@@ -11,6 +11,7 @@ unordered_map<string, string> template_routes = {
     {"/", "index"}, 
     {"/login", "login"}, 
     {"/register", "register"},
+    {"/inventory", "inventory"}
 };
 
 vector<string> get(string route) {
@@ -32,8 +33,12 @@ vector<string> get(string route) {
     else if (route.find("ticket") != string::npos) {
         vector<string> route_parse = split(route, "/");
         string id = route_parse[route_parse.size() - 1];
-        cout << id << endl;
         response = get_ticket(id);
+    }
+    else if (route.find("inventory") != string::npos) {
+        vector<string> route_parse = split(route, "/");
+        string username = route_parse[route_parse.size() - 1];
+        response = get_owned_tickets(username);
     }
     else {
         cout << "unknown route: " << route << endl;
