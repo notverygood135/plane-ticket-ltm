@@ -41,7 +41,6 @@ int main() {
         recv(client_socket, _request, sizeof(_request), 0);
         printf("request:\n%s\n", _request);
         if (!strcmp(_request, "\0")) {
-            cout << "empty request" << endl;
             continue;
         };
 

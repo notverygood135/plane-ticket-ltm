@@ -30,6 +30,9 @@ vector<string> get(string route) {
     else if (route.find("buy") != string::npos) {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/buy.html"};
     }
+    else if (route.find("info") != string::npos) {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/info.html"};
+    }
     else if (route.find("ticket") != string::npos) {
         vector<string> route_parse = split(route, "/");
         string id = route_parse[route_parse.size() - 1];
@@ -48,23 +51,29 @@ vector<string> get(string route) {
 }
 
 vector<string> post(string route, string payload) {
-    vector<string> response;
     vector<string> params = split(payload, "&");
-
     if (route == "/register") {
         return create_user(params[0], params[1], params[2]);
     }
     if (route == "/login") {
-        response = login(params[0], params[1]);
+        return login(params[0], params[1]);
     }
-    else if (route == "/buy") {
-        response = create_ownership(params[0], params[1], params[2], params[3], params[4], params[5]);
+    else if (route == "/own") {
+        return create_ownership(params[0], params[1], params[2], params[3], params[4], params[5]);
     }
-    return response;
+    return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
+}
+
+vector<string> _delete(string route, string payload) {
+    vector<string> params = split(payload, "&");
+    if (route.find("/own") != string::npos) {
+        return delete_ownership(params[0]);
+    }
+    return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
 vector<string> req(string method, string route, string payload) {
-    cout << "method: " << method << ", route: " << route << ", payload: " << payload << endl;
+    // cout << "method: " << method << ", route: " << route << ", payload: " << payload << endl;
     vector<string> response;
     // neu client yeu cau file css
     if (route.find("css") != string::npos) {
@@ -75,6 +84,7 @@ vector<string> req(string method, string route, string payload) {
     }
     if (method == "GET") return get(route);
     else if (method == "POST") return post(route, payload);
+    else if (method == "DELETE") return _delete(route, payload);
     cout << "unknown method: " << route << endl;
     response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};
     return response;

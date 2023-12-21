@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <link rel="stylesheet" href="../static/inventory.css">
     <body>
         <h1><span id="username"></span>'s tickets</h1>
 
@@ -74,6 +75,10 @@
                     span.textContent = ticket[key];
                     li.appendChild(span);
                 }
+                const a = document.createElement("a");
+                a.setAttribute("href", `http://localhost:8001/info/${ticket.ticket_id}`);
+                a.innerHTML = "Info";
+                li.appendChild(a);
                 ul.appendChild(li);
             });
         }

@@ -86,7 +86,6 @@ vector<string> get_tickets() {
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
     response.push_back(ticket_rows);
-    cout << ticket_rows << endl;
     return response;
 }
 
@@ -109,7 +108,6 @@ vector<string> get_owned_tickets(string username) {
     sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.username = \"";
     sql.append(username);
     sql.append("\";");
-    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -121,7 +119,6 @@ vector<string> get_owned_tickets(string username) {
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
     response.push_back(ticket_rows);
-    cout << ticket_rows << endl;
     return response;
 }
 
@@ -154,6 +151,5 @@ vector<string> get_ticket(string id) {
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
     response.push_back(ticket_rows);
-    cout << ticket_rows << endl;
     return response;
 }

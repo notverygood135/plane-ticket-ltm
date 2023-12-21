@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <div id="ticket-info">
-            
-        </div>
+        <div id="ticket-info"></div>
         <div id="user-form">
             <label for="number">Credit Card</label>            
             <input type="text" name="number" id="number">
@@ -47,14 +45,15 @@
         function submit() {
             const username = localStorage.getItem("username");
             if (username == null) {
-                window.location = "http://localhost:8001/login"
+                window.location = "http://localhost:8001/login";
+                return;
             }
             let number = document.getElementById("number").value;
             let expirationDate = document.getElementById("expiration-date").value;
             let securityCode = document.getElementById("security-code").value;
             let fullName = document.getElementById("full-name").value;
             console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
-            fetch("/buy", {
+            fetch("/own", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
