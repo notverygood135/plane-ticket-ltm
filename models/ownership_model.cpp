@@ -47,6 +47,7 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
     sql.append("', '");
     sql.append(expiration_date);
     sql.append("');");
+    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
 
     if (rc != SQLITE_OK) {

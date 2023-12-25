@@ -18,6 +18,7 @@ unordered_map<string, string> template_routes = {
 vector<string> get(string route) {
     vector<string> response;
     vector<string> route_parse = split(route, "/");
+    string parsed_route = route_parse[1];
     if (template_routes.find(route) != template_routes.end()) {
         string html_path = "templates/";
         html_path.append(template_routes.at(route));
@@ -26,29 +27,33 @@ vector<string> get(string route) {
         response.push_back(html_path);
         return response;
     }
-    if (route_parse[1] == "flights") {
+    if (parsed_route == "flights") {
         response = get_flights();
     }
-    else if (route_parse[1] == "tickets") {
+    else if (parsed_route == "tickets") {
         string flight_id = route_parse[route_parse.size() - 1];
         response = get_tickets(flight_id);
     }
-    else if (route_parse[1] == "flight") {
+    else if (parsed_route == "flight") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/flight.html"};
     }
-    else if (route_parse[1] == "buy") {
+    else if (parsed_route == "buy") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/buy.html"};
     }
-    else if (route_parse[1] == "info") {
+    else if (parsed_route == "info") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/info.html"};
     }
-    else if (route_parse[1] == "ticket") {
+    else if (parsed_route == "ticket") {
         string ticket_id = route_parse[route_parse.size() - 1];
         response = get_ticket(ticket_id);
     }
-    else if (route_parse[1] == "inventory") {
+    else if (parsed_route == "inventory") {
         string username = route_parse[route_parse.size() - 1];
         response = get_owned_tickets(username);
+    }
+    else if (parsed_route == "notification") {
+        string username = route_parse[route_parse.size() - 1];
+        response = get_notifications(username);
     }
     else {
         cout << "unknown route: " << route << endl;
@@ -62,11 +67,14 @@ vector<string> post(string route, string payload) {
     if (route == "/register") {
         return create_user(params[0], params[1], params[2]);
     }
-    if (route == "/login") {
+    else if (route == "/login") {
         return login(params[0], params[1]);
     }
     else if (route == "/own") {
         return create_ownership(params[0], params[1], params[2], params[3], params[4], params[5]);
+    }
+    else if (route == "/notification") {
+        return create_notification(params[0], params[1], params[2], params[3]);
     }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }

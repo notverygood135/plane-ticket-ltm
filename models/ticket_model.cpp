@@ -38,7 +38,6 @@ static int ticketsCallback(void *data, int argc, char **argv, char **column) {
 static int ticketCallback(void *data, int argc, char **argv, char **column) {
     string row = "{";
     for (int i = 0; i < argc; i++) {
-        printf("%s = %s\n", column[i], argv[i] ? argv[i] : "null");
         row.append("\"");
         row.append(column[i]);
         row.append("\"");
@@ -50,7 +49,6 @@ static int ticketCallback(void *data, int argc, char **argv, char **column) {
         }
     }
     row.append("}");
-    printf("\n");
     ticket_rows.append(row);
     ticket_row_count++;
     return 0;

@@ -39,7 +39,7 @@ int main() {
         memset(_request, 0, sizeof(_request));
         client_socket = accept(server_socket, NULL, NULL);
         recv(client_socket, _request, sizeof(_request), 0);
-        printf("request:\n%s\n", _request);
+        // printf("request:\n%s\n", _request);
         if (!strcmp(_request, "\0")) {
             continue;
         };
