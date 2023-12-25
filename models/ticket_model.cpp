@@ -19,7 +19,6 @@ static int ticketsCallback(void *data, int argc, char **argv, char **column) {
         row = "{";
     }
     for (int i = 0; i < argc; i++) {
-        printf("%s = %s\n", column[i], argv[i] ? argv[i] : "null");
         row.append("\"");
         row.append(column[i]);
         row.append("\"");
@@ -31,7 +30,6 @@ static int ticketsCallback(void *data, int argc, char **argv, char **column) {
         }
     }
     row.append("}");
-    printf("\n");
     ticket_rows.append(row);
     ticket_row_count++;
     return 0;
@@ -58,7 +56,7 @@ static int ticketCallback(void *data, int argc, char **argv, char **column) {
     return 0;
 }
 
-vector<string> get_tickets() {
+vector<string> get_tickets(string flight_id) {
     ticket_row_count = 0;
     ticket_rows = "[";
     sqlite3 *db;
@@ -74,7 +72,10 @@ vector<string> get_tickets() {
         response.push_back("");
         return response;
     }
-    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price from flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE tickets.ticket_id NOT IN (SELECT ticket_id FROM own);";
+    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price from flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE tickets.ticket_id NOT IN (SELECT ticket_id FROM own) AND tickets.flight_id = ";
+    sql.append("\"");
+    sql.append(flight_id);
+    sql.append("\";");
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;

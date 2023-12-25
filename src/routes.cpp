@@ -11,11 +11,13 @@ unordered_map<string, string> template_routes = {
     {"/", "index"}, 
     {"/login", "login"}, 
     {"/register", "register"},
+    {"/flight", "flight"},
     {"/inventory", "inventory"}
 };
 
 vector<string> get(string route) {
     vector<string> response;
+    vector<string> route_parse = split(route, "/");
     if (template_routes.find(route) != template_routes.end()) {
         string html_path = "templates/";
         html_path.append(template_routes.at(route));
@@ -24,22 +26,27 @@ vector<string> get(string route) {
         response.push_back(html_path);
         return response;
     }
-    if (route == "/tickets") {
-        response = get_tickets();
+    if (route_parse[1] == "flights") {
+        response = get_flights();
     }
-    else if (route.find("buy") != string::npos) {
+    else if (route_parse[1] == "tickets") {
+        string flight_id = route_parse[route_parse.size() - 1];
+        response = get_tickets(flight_id);
+    }
+    else if (route_parse[1] == "flight") {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/flight.html"};
+    }
+    else if (route_parse[1] == "buy") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/buy.html"};
     }
-    else if (route.find("info") != string::npos) {
+    else if (route_parse[1] == "info") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/info.html"};
     }
-    else if (route.find("ticket") != string::npos) {
-        vector<string> route_parse = split(route, "/");
-        string id = route_parse[route_parse.size() - 1];
-        response = get_ticket(id);
+    else if (route_parse[1] == "ticket") {
+        string ticket_id = route_parse[route_parse.size() - 1];
+        response = get_ticket(ticket_id);
     }
-    else if (route.find("inventory") != string::npos) {
-        vector<string> route_parse = split(route, "/");
+    else if (route_parse[1] == "inventory") {
         string username = route_parse[route_parse.size() - 1];
         response = get_owned_tickets(username);
     }

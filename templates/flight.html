@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/flight.css">
     <body>
         <h1>hello <span id="username"></span></h1>
 
@@ -9,36 +9,36 @@
         <a href="http://localhost:8001/inventory" class="nav">inventory</a>
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
 
-        <div id="flights-info">
-            <div id="flights-search">
+        <div id="tickets-info">
+            <div id="tickets-search">
                 <input type="text" name="from" id="from" placeholder="From">
                 <input type="text" name="to" id="to" placeholder="To">
                 <input type="airline" name="airline" id="airline" placeholder="Airline">
                 <input type="datetime-local" name="datetime" id="datetime">
                 <button type="button" onclick="filter()">Filter</button>
-                <select name="sort" id="sort" onchange="sortFlights()">
-                    <option value="flight">Flight</option>
-                    <option value="time">Time</option>
-                    <option value="seat">Seat</option>
-                    <option value="price">Price</option>
-                </select>
             </div>
-            <div id="flights-column">
+            <div id="tickets-column">
                 <span>Flight</span>
                 <span>From</span>
                 <span>To</span>
                 <span>Date</span>
                 <span>Time</span>
                 <span>Airline</span>
+                <span>Ticket</span>
+                <span>Seat</span>
+                <span>Price</span>
             </div>
-            <ul id="flights"></ul>
+            <ul id="tickets"></ul>
         </div>
 
     </body>
 
     <script>
-        let flights = [];
-        let filteredFlights = [];
+        const url = window.location.pathname;
+        const id = url.split("/")[2];
+
+        let tickets = [];
+        let filteredTickets = [];
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
         let username = localStorage.getItem("username");
@@ -64,31 +64,31 @@
             let to = document.getElementById("to").value;
             let airline = document.getElementById("airline").value;
             let datetime= document.getElementById("datetime").value;
-            filteredFlights = flights;
+            filteredTickets = tickets;
             console.log(`from: ${from}, to: ${to}, datetime: ${datetime}`);
             if (from != "") {
-                filteredFlights = filteredFlights.filter(flight => 
+                filteredTickets = filteredTickets.filter(flight => 
                     flight.from.includes(from));
             }
             if (to != "") {
-                filteredFlights = filteredFlights.filter(flight => 
+                filteredTickets = filteredTickets.filter(flight => 
                     flight.to.includes(to));
             }
             if (airline != "") {
-                filteredFlights = filteredFlights.filter(flight => 
+                filteredTickets = filteredTickets.filter(flight => 
                     flight.airline.includes(airline));
             }
             if (datetime != "") {
-                filteredFlights = filteredFlights.filter(flight => 
+                filteredTickets = filteredTickets.filter(flight => 
                     Date.parse(datetime)== Date.parse(`${flight.date}T${flight.time}:00`));
             }
-            renderFlights();
+            renderTickets();
         }
 
-        function renderFlights() {
-            const ul = document.getElementById("flights");
+        function renderTickets() {
+            const ul = document.getElementById("tickets");
             ul.innerHTML = ""; // xoa cac element da co de them tu dau
-            filteredFlights.forEach(ticket => {
+            filteredTickets.forEach(ticket => {
                 const li = document.createElement("li");
                 li.className = "ticket";
                 for (const key in ticket) {
@@ -97,49 +97,23 @@
                     li.appendChild(span);
                 }
                 const a = document.createElement("a");
-                a.setAttribute("href", `http://localhost:8001/flight/${ticket.flight_id}`);
-                a.innerHTML = "Book";
+                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
+                a.innerHTML = "Buy";
                 li.appendChild(a);
                 ul.appendChild(li);
             });
         }
 
-        function sortFlights() {
-            const select = document.getElementById("sort").value;
-            console.log(select);
-            switch (select) {
-                case "flight":
-                    filteredFlights.sort((a, b) => {
-                        a.flight_id > b.flight_id;
-                    })
-                    break;
-                case "time":
-                    
-                    break;
-                case "seat":
-                    
-                    break;
-                case "price":
-                    filteredFlights.sort((a, b) => {
-                        a.price > b.price;
-                    })
-                    break;
-                default:
-                    break;
-            }
-            renderFlights();
-        }
-
-        fetch("/flights", {
+        fetch(`/tickets/${id}`, {
             method: "GET",
         })
         .then(response => {
             return(response.text());
         })
         .then(data => {
-            flights = JSON.parse(data);
-            filteredFlights = flights;
-            renderFlights();
+            tickets = JSON.parse(data);
+            filteredTickets = tickets;
+            renderTickets();
         })
     </script>
 </html>
