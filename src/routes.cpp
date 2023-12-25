@@ -12,7 +12,8 @@ unordered_map<string, string> template_routes = {
     {"/login", "login"}, 
     {"/register", "register"},
     {"/flight", "flight"},
-    {"/inventory", "inventory"}
+    {"/inventory", "inventory"},
+    {"/notifications", "notifications"}
 };
 
 vector<string> get(string route) {
