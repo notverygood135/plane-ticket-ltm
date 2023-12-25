@@ -10,23 +10,12 @@
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
 
         <div id="tickets-info">
-            <div id="tickets-search">
-                <input type="text" name="from" id="from" placeholder="From">
-                <input type="text" name="to" id="to" placeholder="To">
-                <input type="airline" name="airline" id="airline" placeholder="Airline">
-                <input type="datetime-local" name="datetime" id="datetime">
-                <button type="button" onclick="filter()">Filter</button>
-            </div>
-            <div id="tickets-column">
-                <span>Flight</span>
-                <span>From</span>
-                <span>To</span>
-                <span>Date</span>
-                <span>Time</span>
-                <span>Airline</span>
-                <span>Ticket</span>
-                <span>Seat</span>
-                <span>Price</span>
+            <div id="ticket-info">
+                <div class="ticket-info-column">Flight: <span id="flight"></span></div>
+                <div class="ticket-info-column">From: <span id="from"></span></div>
+                <div class="ticket-info-column">To: <span id="to"></span></div>
+                <div class="ticket-info-column">Date: <span id="date"></span></div>
+                <div class="ticket-info-column">Time: <span id="time"></span></div>
             </div>
             <ul id="tickets"></ul>
         </div>
@@ -88,19 +77,20 @@
         function renderTickets() {
             const ul = document.getElementById("tickets");
             ul.innerHTML = ""; // xoa cac element da co de them tu dau
+
+            document.getElementById("flight").innerText = filteredTickets[0].flight_id;
+            document.getElementById("from").innerText = filteredTickets[0].from;
+            document.getElementById("to").innerText = filteredTickets[0].to;
+            document.getElementById("date").innerText = filteredTickets[0].date;
+            document.getElementById("time").innerText = filteredTickets[0].time;
+            
             filteredTickets.forEach(ticket => {
-                const li = document.createElement("li");
-                li.className = "ticket";
-                for (const key in ticket) {
-                    const span = document.createElement("span");
-                    span.textContent = ticket[key];
-                    li.appendChild(span);
-                }
                 const a = document.createElement("a");
+                a.className = "ticket";
+                const ticketInfo = document.getElementById("ticket-info");
                 a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
-                a.innerHTML = "Buy";
-                li.appendChild(a);
-                ul.appendChild(li);
+                a.textContent = ticket.seat;
+                ul.appendChild(a);
             });
         }
 

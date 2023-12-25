@@ -7,13 +7,7 @@ h1 {
     width: 100%;
 }
 
-li, #tickets-column {
+ul {
     display: grid;
-    grid-template-columns: 1fr 3fr 3fr 2fr 1.5fr 3fr 1fr 1fr 2fr 1fr;
-}
-
-#tickets-column span, li span {
-    margin: 0 10px;
-    display: flex;
-    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
