@@ -72,13 +72,21 @@
 
             const content = `Boarding pass confirmed\\nDear ${username},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
 
+            const date = new Date();
+            const dateString = date.toISOString().split('T')[0];
+            const timeString = date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: "numeric",
+                minute: "numeric"
+            });
+
             const requestOptionsNotification = {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&content=${content}&date=${ticket.date}&time=${ticket.time}`
+                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
             }
             
             fetch("/own", requestOptionsOwn)

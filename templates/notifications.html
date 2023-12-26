@@ -1,6 +1,39 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <h1>notifications go here</h1>
+        <a href="http://localhost:8001/" class="nav">home</a>
+        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
+        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+
+        <ul id="notifications"></ul>
     </body>
+    <script>
+        const username = localStorage.getItem("username");
+        if (username == null) {
+            window.location = "http://localhost:8001/login"
+        }
+        const notificationsElement = document.getElementById("notifications");
+        fetch(`/notification/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const notifications = JSON.parse(data);
+            notifications.forEach(notification => {
+                const li = document.createElement("li");
+                li.className = "notification";
+                li.innerText = notification.content;
+
+                const div = document.createElement("div");
+                div.className = "datetime";
+                div.innerText = `${notification.date} ${notification.time}`;
+                li.appendChild(div);
+                notificationsElement.appendChild(li);
+            });
+        })
+
+    </script>
 </html>
