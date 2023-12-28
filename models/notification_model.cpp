@@ -57,7 +57,7 @@ static int notificationCallback(void *data, int argc, char **argv, char **column
 }
 
 vector<string> get_notifications(string username) {
-        notification_row_count = 0;
+    notification_row_count = 0;
     notification_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;
@@ -89,6 +89,71 @@ vector<string> get_notifications(string username) {
     return response;
 }
 
+vector<string> get_unread_notifications_count(string username) {
+    notification_row_count = 0;
+    notification_rows = "[";
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "SELECT COUNT(notification_id) as count FROM notifications WHERE username = '";
+    sql.append(username);
+    sql.append("' AND read = 0;");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    notification_rows.append("]");
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(notification_rows);
+    return response;
+}
+
+vector<string> update_notifications(string username) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "UPDATE notifications SET read = 1 WHERE username = '";
+    sql.append(username);
+    sql.append("';");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back("");
+    return response;
+}
+
 vector<string> create_notification(string _username, string _content, string _date, string _time) {
     string username = split(_username, "=")[1];
     string content = split(_content, "=")[1];
@@ -109,7 +174,7 @@ vector<string> create_notification(string _username, string _content, string _da
         response.push_back("");
         return response;
     }
-    sql = "INSERT INTO notifications (username, content, date, time) VALUES ('";
+    sql = "INSERT INTO notifications (username, content, date, time, read) VALUES ('";
     sql.append(username);
     sql.append("', '");
     sql.append(content);
@@ -117,7 +182,7 @@ vector<string> create_notification(string _username, string _content, string _da
     sql.append(date);
     sql.append("', '");
     sql.append(time);
-    sql.append("');");
+    sql.append("', 0);");
     rc = sqlite3_exec(db, sql.c_str(), notificationCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;

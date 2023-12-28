@@ -6,7 +6,7 @@
 
         <a href="http://localhost:8001">home</a>
         <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
 
         <div id="tickets-info">
@@ -33,7 +33,7 @@
     </body>
     <script>
         const username = localStorage.getItem("username");
-        if (username == null) {
+        if (username == null || username == "") {
             window.location = "http://localhost:8001/login"
         }
         document.getElementById("username").innerHTML = username;
@@ -96,6 +96,18 @@
             tickets = JSON.parse(data);
             filteredTickets = tickets;
             renderTickets();
+        })
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
         })
     </script>
 </html>

@@ -63,6 +63,10 @@ vector<string> get(string route) {
         string username = route_parse[route_parse.size() - 1];
         response = get_notifications(username);
     }
+    else if (parsed_route == "unread") {
+        string username = route_parse[route_parse.size() - 1];
+        response = get_unread_notifications_count(username);
+    }
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
@@ -87,6 +91,15 @@ vector<string> post(string route, string payload) {
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
+vector<string> put(string route, string payload) {
+    vector<string> route_parse = split(route, "/");
+    string parsed_route = route_parse[1];
+    if (parsed_route == "read") {
+        return update_notifications(route_parse[route_parse.size() - 1]);
+    }
+    return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
+}
+
 vector<string> _delete(string route, string payload) {
     vector<string> params = split(payload, "&");
     if (route.find("/own") != string::npos) {
@@ -107,6 +120,7 @@ vector<string> req(string method, string route, string payload) {
     }
     if (method == "GET") return get(route);
     else if (method == "POST") return post(route, payload);
+    else if (method == "PUT") return put(route, payload);
     else if (method == "DELETE") return _delete(route, payload);
     cout << "unknown method: " << route << endl;
     response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};
