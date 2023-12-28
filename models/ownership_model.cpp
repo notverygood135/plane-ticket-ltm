@@ -46,7 +46,10 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
     sql.append(security_code);
     sql.append("', '");
     sql.append(expiration_date);
-    sql.append("');");
+    sql.append("');\n");
+    sql.append("UPDATE tickets SET owned = 1 WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
 
@@ -79,9 +82,12 @@ vector<string> delete_ownership(string _ticket_id) {
         response.push_back("");
         return response;
     }
-    sql = "DELETE FROM own WHERE ticket_id = \"";
+    sql = "DELETE FROM own WHERE ticket_id = '";
     sql.append(ticket_id);
-    sql.append("\";");
+    sql.append("';\n");
+    sql.append("UPDATE tickets SET owned = 0 WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {

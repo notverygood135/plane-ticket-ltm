@@ -19,6 +19,7 @@ unordered_map<string, string> template_routes = {
 vector<string> get(string route) {
     vector<string> response;
     vector<string> route_parse = split(route, "/");
+    int params_count = route_parse.size();
     string parsed_route = route_parse[1];
     if (template_routes.find(route) != template_routes.end()) {
         string html_path = "templates/";
@@ -29,7 +30,13 @@ vector<string> get(string route) {
         return response;
     }
     if (parsed_route == "flights") {
-        response = get_flights();
+        if (params_count == 2) {
+            response = get_flights();
+        }
+        else {
+            string flight_id = route_parse[route_parse.size() - 1];
+            response = get_flight(flight_id);
+        }
     }
     else if (parsed_route == "tickets") {
         string flight_id = route_parse[route_parse.size() - 1];

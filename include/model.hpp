@@ -3,6 +3,7 @@
 using namespace std;
 
 vector<string> get_flights();
+vector<string> get_flight(string flight_id);
 vector<string> get_tickets(string flight_id);
 vector<string> get_owned_tickets(string username);
 vector<string> get_ticket(string ticket_id);

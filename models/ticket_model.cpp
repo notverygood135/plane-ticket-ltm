@@ -70,10 +70,10 @@ vector<string> get_tickets(string flight_id) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price from flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE tickets.ticket_id NOT IN (SELECT ticket_id FROM own) AND tickets.flight_id = ";
-    sql.append("\"");
+    // sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price from flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE tickets.ticket_id NOT IN (SELECT ticket_id FROM own) AND tickets.flight_id = '";
+    sql = "SELECT * from tickets WHERE flight_id = '";
     sql.append(flight_id);
-    sql.append("\";");
+    sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -104,9 +104,9 @@ vector<string> get_owned_tickets(string username) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.username = \"";
+    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.username = '";
     sql.append(username);
-    sql.append("\";");
+    sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -136,9 +136,9 @@ vector<string> get_ticket(string id) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE ticket_id = ";
+    sql = "SELECT * FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id WHERE ticket_id = '";
     sql.append(id);
-    sql.append(";");
+    sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), ticketCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
