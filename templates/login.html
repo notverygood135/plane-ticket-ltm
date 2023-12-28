@@ -28,7 +28,7 @@
                             <h4 class="mt-1 mb-5 pb-1">We are The Lotus Team</h4>
                           </div>
           
-                          <form>
+                          <div>
                             <p>Please login to your account</p>
           
                             <div class="form-outline mb-4">
@@ -50,14 +50,11 @@
           
                             <div class="d-flex align-items-center justify-content-center pb-4">
                               <p class="mb-0 me-2">Don't have an account?</p>
-                              <button type="button" class="btn btn-outline-danger">Create new</button>
+                              <button type="button" class="btn btn-outline-danger""> <a  href="http://localhost:8001/register">Create new account</a></button>
                             </div>
           
-                            <h1>login</h1>
-                            <input type="text" name="username" id="username" placeholder="Username">
-                            <input type="password" name="password" id="password" placeholder="Password">
-                            <button type="button" onclick="submit()">Submit</button>
-                          </form>
+                            
+                        </div>
           
                         </div>
                       </div>
@@ -75,7 +72,12 @@
               </div>
             </div>
           </section>
-       
+          <!-- <div>
+          <h1>login</h1>
+          <input type="text" name="username" id="username" placeholder="Username">
+          <input type="password" name="password" id="password" placeholder="Password">
+          <button type="button" onclick="submit()">Submit</button>
+        </div> -->
         <script>
             function submit() {
                 let username = document.getElementById("username").value;
