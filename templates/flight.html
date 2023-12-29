@@ -8,7 +8,7 @@
         <a href="http://localhost:8001/login" class="auth">login</a>
         <a href="http://localhost:8001/register" class="auth">register</a>
         <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
 
         <div id="flights-info">
@@ -16,6 +16,7 @@
                 <div class="flight-info-column">Flight: <span id="flight"></span></div>
                 <div class="flight-info-column">From: <span id="from"></span></div>
                 <div class="flight-info-column">To: <span id="to"></span></div>
+                <div class="flight-info-column">Airline: <span id="airline"></span></div>
                 <div class="flight-info-column">Date: <span id="date"></span></div>
                 <div class="flight-info-column">Time: <span id="time"></span></div>
             </div>
@@ -31,9 +32,9 @@
         let filteredTickets = [];
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
-        let username = localStorage.getItem("username");
-        let authElements = document.querySelectorAll(".auth");
-        let navElements = document.querySelectorAll(".nav");
+        const username = localStorage.getItem("username");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
         if (username != null) {
             document.getElementById("username").innerHTML = username;
             authElements.forEach(item => item.style.display = "none");
@@ -49,51 +50,38 @@
             localStorage.clear();
         }
 
-        function filter() {
-            let from = document.getElementById("from").value;
-            let to = document.getElementById("to").value;
-            let airline = document.getElementById("airline").value;
-            let datetime= document.getElementById("datetime").value;
-            filteredTickets = tickets;
-            console.log(`from: ${from}, to: ${to}, datetime: ${datetime}`);
-            if (from != "") {
-                filteredTickets = filteredTickets.filter(flight => 
-                    flight.from.includes(from));
-            }
-            if (to != "") {
-                filteredTickets = filteredTickets.filter(flight => 
-                    flight.to.includes(to));
-            }
-            if (airline != "") {
-                filteredTickets = filteredTickets.filter(flight => 
-                    flight.airline.includes(airline));
-            }
-            if (datetime != "") {
-                filteredTickets = filteredTickets.filter(flight => 
-                    Date.parse(datetime)== Date.parse(`${flight.date}T${flight.time}:00`));
-            }
-            renderTickets();
-        }
-
         function renderTickets() {
             const ul = document.getElementById("tickets");
             ul.innerHTML = ""; // xoa cac element da co de them tu dau
 
-            document.getElementById("flight").innerText = filteredTickets[0].flight_id;
-            document.getElementById("from").innerText = filteredTickets[0].from;
-            document.getElementById("to").innerText = filteredTickets[0].to;
-            document.getElementById("date").innerText = filteredTickets[0].date;
-            document.getElementById("time").innerText = filteredTickets[0].time;
-            
             filteredTickets.forEach(ticket => {
                 const a = document.createElement("a");
                 a.className = "ticket";
                 const ticketInfo = document.getElementById("ticket-info");
                 a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
                 a.textContent = ticket.seat;
+                if (ticket.owned == "1") {
+                    a.className = "disabled";
+                }
                 ul.appendChild(a);
             });
         }
+
+        fetch(`/flights/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const flightData = JSON.parse(data)[0];
+            document.getElementById("flight").innerText = flightData.flight_id;
+            document.getElementById("from").innerText = flightData.from;
+            document.getElementById("to").innerText = flightData.to;
+            document.getElementById("airline").innerText = flightData.airline;
+            document.getElementById("date").innerText = flightData.date;
+            document.getElementById("time").innerText = flightData.time;
+        })
 
         fetch(`/tickets/${id}`, {
             method: "GET",
@@ -102,9 +90,22 @@
             return(response.text());
         })
         .then(data => {
+            console.log(data);
             tickets = JSON.parse(data);
             filteredTickets = tickets;
             renderTickets();
+        })
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
         })
     </script>
 </html>

@@ -11,3 +11,10 @@ ul {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
+
+a.disabled {
+    color: #aaaaaa;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}

@@ -36,7 +36,7 @@ vector<string> create_user(string _username, string _password, string _confirm) 
     sql.append(username);
     sql.append("', '");
     sql.append(password);
-    sql.append("');");
+    sql.append("', 10000.0, 0);");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
 

@@ -7,6 +7,7 @@
             <div class="ticket-info-column">To: <span id="to"></span></div>
             <div class="ticket-info-column">Date: <span id="date"></span></div>
             <div class="ticket-info-column">Time: <span id="time"></span></div>
+            <div class="ticket-info-column">Price: <span id="price"></span></div>
         </div>
         <div id="user-form">
             <label for="number">Credit Card</label>            
@@ -35,6 +36,7 @@
             document.getElementById("to").innerText = ticket.to;
             document.getElementById("date").innerText = ticket.date;
             document.getElementById("time").innerText = ticket.time;
+            document.getElementById("price").innerText = ticket.price;
         }
 
         fetch(`/ticket/${id}`, {
@@ -102,7 +104,7 @@
                     .then(status => {
                         if (status == 200) {
                             alert("You have a new notification!");
-                            window.location.replace("http://localhost:8001");
+                            window.location.replace("http://localhost:8001/notifications");
                         }
                     })
                 }
