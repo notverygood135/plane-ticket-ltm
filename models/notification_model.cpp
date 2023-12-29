@@ -196,3 +196,34 @@ vector<string> create_notification(string _username, string _content, string _da
     response.push_back(notification_rows);
     return response;
 }
+
+vector<string> delete_notifications(string username) {
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "DELETE FROM notifications WHERE username = '";
+    sql.append(username);
+    sql.append("';");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back("OK");
+    return response;
+}

@@ -150,7 +150,6 @@
             return(response.text());
         })
         .then(data => {
-            console.log(data);
             const unread = document.getElementById("unread");
             unread.innerText = JSON.parse(data)[0].count;
         })

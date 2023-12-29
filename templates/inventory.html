@@ -4,10 +4,13 @@
     <body>
         <h1><span id="username"></span>'s tickets</h1>
 
+
         <a href="http://localhost:8001">home</a>
         <a href="http://localhost:8001/inventory" class="nav">inventory</a>
         <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+
+        <div>money: <span id="money"></span></div>
 
         <div id="tickets-info">
             <div id="tickets-search">
@@ -72,7 +75,7 @@
             ul.innerHTML = ""; // xoa cac element da co de them tu dau
             filteredTickets.forEach(ticket => {
                 const li = document.createElement("li");
-                li.className = "ticket";
+                li.className = "ticket";                                                                                                                                                                                                                                                                     
                 for (const key in ticket) {
                     const span = document.createElement("span");
                     span.textContent = ticket[key];
@@ -81,7 +84,7 @@
                 const a = document.createElement("a");
                 a.setAttribute("href", `http://localhost:8001/info/${ticket.ticket_id}`);
                 a.innerHTML = "Info";
-                li.appendChild(a);
+                li.appendChild(a);                                                                                                                                                                                                            +
                 ul.appendChild(li);
             });
         }
@@ -102,12 +105,23 @@
             method: "GET",
         })
         .then(response => {
-            return(response.text());
+            return response.text();
         })
         .then(data => {
-            console.log(data);
             const unread = document.getElementById("unread");
             unread.innerText = JSON.parse(data)[0].count;
+        })
+
+        fetch(`/user/${username}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
         })
     </script>
 </html>
