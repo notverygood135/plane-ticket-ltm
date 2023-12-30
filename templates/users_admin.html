@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        admin users page
+    </body>
+    <script>
+        const username = localStorage.getItem("username");
+        if (username == null || username == "") {
+            window.location = "http://localhost:8001/error"
+        }
+
+        fetch(`/user/${username}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            if (user.type == "0") {
+                window.location = "http://localhost:8001/error";
+            }
+        })
+    </script>
+</html>

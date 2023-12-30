@@ -13,7 +13,9 @@ unordered_map<string, string> template_routes = {
     {"/register", "register"},
     {"/flight", "flight"},
     {"/inventory", "inventory"},
-    {"/notifications", "notifications"}
+    {"/notifications", "notifications"},
+    {"/manage/flights", "index_admin"},
+    {"/manage/users", "users_admin"}
 };
 
 vector<string> get(string route) {
@@ -53,6 +55,9 @@ vector<string> get(string route) {
     else if (parsed_route == "info") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/info.html"};
     }
+    else if (parsed_route == "manage") {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/flight_admin.html"};
+    }
     else if (parsed_route == "ticket") {
         string ticket_id = route_parse[route_parse.size() - 1];
         response = get_ticket(ticket_id);
@@ -73,6 +78,11 @@ vector<string> get(string route) {
         string username = route_parse[route_parse.size() - 1];
         response = get_user(username);
     }
+    else if (parsed_route == "passengers") {
+        string flight_id = route_parse[route_parse.size() - 1];
+        response = get_passengers(flight_id);
+    }
+
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
@@ -100,8 +110,13 @@ vector<string> post(string route, string payload) {
 vector<string> put(string route, string payload) {
     vector<string> route_parse = split(route, "/");
     string parsed_route = route_parse[1];
+    vector<string> body = split(payload, "&");
+
     if (parsed_route == "read") {
         return update_notifications(route_parse[route_parse.size() - 1]);
+    }
+    else if (parsed_route == "flights") {
+        return update_flight(body[0], body[1], body[2]);
     }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }

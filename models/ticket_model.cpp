@@ -90,7 +90,7 @@ vector<string> get_tickets(string flight_id) {
 }
 
 vector<string> get_owned_tickets(string username) {
-        ticket_row_count = 0;
+    ticket_row_count = 0;
     ticket_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;

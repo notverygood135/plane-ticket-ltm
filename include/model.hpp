@@ -4,6 +4,7 @@ using namespace std;
 
 vector<string> get_flights();
 vector<string> get_flight(string flight_id);
+vector<string> update_flight(string _flight_id, string _date, string _time);
 
 vector<string> get_tickets(string flight_id);
 vector<string> get_owned_tickets(string username);
@@ -20,3 +21,4 @@ vector<string> delete_notifications(string username);
 
 
 vector<string> get_user(string username);
+vector<string> get_passengers(string flight_id);
