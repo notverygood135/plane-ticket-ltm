@@ -6,6 +6,7 @@
         <a href="http://localhost:8001/notifications" class="nav">notifications</a>
         <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
 
+        <div onclick="clearNotifications()">clear</div>
         <ul id="notifications"></ul>
     </body>
     <script>
@@ -13,7 +14,12 @@
         if (username == null) {
             window.location = "http://localhost:8001/login"
         }
+        function logout() {
+            localStorage.clear();
+        }
+
         const notificationsElement = document.getElementById("notifications");
+
         fetch(`/notification/${username}`, {
             method: "GET",
         })
@@ -35,5 +41,19 @@
             });
         })
 
+        fetch(`/read/${username}`, {
+            method: "PUT"
+        })
+
+        function clearNotifications() {
+            fetch(`/notification/${username}`, {
+                method: "DELETE",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            
+            notificationsElement.innerText = "";
+        }
     </script>
 </html>

@@ -13,7 +13,9 @@ unordered_map<string, string> template_routes = {
     {"/register", "register"},
     {"/flight", "flight"},
     {"/inventory", "inventory"},
-    {"/notifications", "notifications"}
+    {"/notifications", "notifications"},
+    {"/manage/flights", "index_admin"},
+    {"/manage/users", "users_admin"}
 };
 
 vector<string> get(string route) {
@@ -21,6 +23,7 @@ vector<string> get(string route) {
     vector<string> route_parse = split(route, "/");
     int params_count = route_parse.size();
     string parsed_route = route_parse[1];
+
     if (template_routes.find(route) != template_routes.end()) {
         string html_path = "templates/";
         html_path.append(template_routes.at(route));
@@ -29,6 +32,7 @@ vector<string> get(string route) {
         response.push_back(html_path);
         return response;
     }
+    
     if (parsed_route == "flights") {
         if (params_count == 2) {
             response = get_flights();
@@ -51,6 +55,9 @@ vector<string> get(string route) {
     else if (parsed_route == "info") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/info.html"};
     }
+    else if (parsed_route == "manage") {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/flight_admin.html"};
+    }
     else if (parsed_route == "ticket") {
         string ticket_id = route_parse[route_parse.size() - 1];
         response = get_ticket(ticket_id);
@@ -63,6 +70,19 @@ vector<string> get(string route) {
         string username = route_parse[route_parse.size() - 1];
         response = get_notifications(username);
     }
+    else if (parsed_route == "unread") {
+        string username = route_parse[route_parse.size() - 1];
+        response = get_unread_notifications_count(username);
+    }
+    else if (parsed_route == "user") {
+        string username = route_parse[route_parse.size() - 1];
+        response = get_user(username);
+    }
+    else if (parsed_route == "passengers") {
+        string flight_id = route_parse[route_parse.size() - 1];
+        response = get_passengers(flight_id);
+    }
+
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
@@ -71,26 +91,50 @@ vector<string> get(string route) {
 }
 
 vector<string> post(string route, string payload) {
-    vector<string> params = split(payload, "&");
+    vector<string> body = split(payload, "&");
     if (route == "/register") {
-        return create_user(params[0], params[1], params[2]);
+        return create_user(body[0], body[1], body[2]);
     }
     else if (route == "/login") {
-        return login(params[0], params[1]);
+        return login(body[0], body[1]);
     }
     else if (route == "/own") {
-        return create_ownership(params[0], params[1], params[2], params[3], params[4], params[5]);
+        return create_ownership(body[0], body[1], body[2], body[3], body[4], body[5]);
     }
     else if (route == "/notification") {
-        return create_notification(params[0], params[1], params[2], params[3]);
+        return create_notification(body[0], body[1], body[2], body[3]);
+    }
+    return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
+}
+
+vector<string> put(string route, string payload) {
+    vector<string> route_parse = split(route, "/");
+    string parsed_route = route_parse[1];
+    vector<string> body = split(payload, "&");
+
+    if (parsed_route == "read") {
+        return update_notifications(route_parse[route_parse.size() - 1]);
+    }
+    else if (parsed_route == "flights") {
+        return update_flight(body[0], body[1], body[2]);
     }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
 vector<string> _delete(string route, string payload) {
-    vector<string> params = split(payload, "&");
-    if (route.find("/own") != string::npos) {
-        return delete_ownership(params[0]);
+    vector<string> response;
+    vector<string> route_parse = split(route, "/");
+    int params_count = route_parse.size();
+    string parsed_route = route_parse[1];
+
+    vector<string> body = split(payload, "&");
+
+    if (parsed_route == "own") {
+        return delete_ownership(body[0]);
+    }
+    else if (parsed_route == "notification") {
+        string username = route_parse[route_parse.size() - 1];
+        return delete_notifications(username);
     }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
@@ -107,6 +151,7 @@ vector<string> req(string method, string route, string payload) {
     }
     if (method == "GET") return get(route);
     else if (method == "POST") return post(route, payload);
+    else if (method == "PUT") return put(route, payload);
     else if (method == "DELETE") return _delete(route, payload);
     cout << "unknown method: " << route << endl;
     response = {"templates/error.html", "HTTP/1.1 404 Not Found\r\n\r\n"};

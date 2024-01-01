@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div>Passengers:</div>
+        <ul id="passengers"></ul>
+        <div id="flight-info">
+            <div class="flight-info-column">
+                Flight:
+                <span id="flight"></span>
+            </div>
+            <div class="flight-info-column">
+                From:
+                <span id="from"></span>
+            </div>
+            <div class="flight-info-column">
+                To:
+                <span id="to"></span>
+            </div>
+            <div class="flight-info-column">
+                Airline:
+                <span id="airline"></span>
+            </div>
+            <div class="flight-info-column">
+                <label for="date">Date</label>
+                <input id="date" type="date"></input>
+            </div>
+            <div class="flight-info-column">
+                <label for="time">Time</label>
+                <input id="time" type="time"></input>
+            </div>
+            <button type="button" onclick="submit()">Submit</button>
+        </div>
+    </body>
+    <script>
+        const url = window.location.pathname;
+        const id = url.split("/")[3];
+        const passengers = [];
+
+        fetch(`/flights/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const flightData = JSON.parse(data)[0];
+            document.getElementById("flight").innerText = flightData.flight_id;
+            document.getElementById("from").innerText = flightData.from;
+            document.getElementById("to").innerText = flightData.to;
+            document.getElementById("airline").innerText = flightData.airline;
+            document.getElementById("date").value = flightData.date;
+            document.getElementById("time").value = flightData.time;
+        })
+
+        fetch(`/passengers/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const passengersData = JSON.parse(data);
+            const ul = document.getElementById("passengers");
+            passengersData.forEach(passenger => {
+                const li = document.createElement("li");
+                li.innerText = passenger.username;
+                ul.appendChild(li);
+                passengers.push(passenger.username);
+            });
+        })
+
+        function submit() {
+            const date = document.getElementById("date").value;
+            const time = document.getElementById("time").value;
+
+            console.log(date);
+            console.log(time);
+
+            fetch(`/flights/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: `flight_id=${id}&date=${date}&time=${time}`
+            })
+            .then(response => {
+                return(response.text());
+            })
+
+            passengers.forEach(passenger => {
+                notifyPassenger(passenger)
+            });
+        }
+
+        function notifyPassenger(passenger) {
+            const username = passenger;
+            const from = document.getElementById("from").innerText;
+            const to = document.getElementById("to").innerText;
+            const newDate = document.getElementById("date").value;
+            const newTime = document.getElementById("time").value;
+
+
+            const content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been rescheduled to another time:\\n${newTime}, ${newDate}\\nWe apologise for any inconvenience this may cause you\\nSafe travels!`;
+
+            const date = new Date();
+            const dateString = date.toISOString().split('T')[0];
+            const timeString = date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: "numeric",
+                minute: "numeric"
+            });
+
+            const requestOptionsNotification = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: 
+                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+            }
+
+            fetch("/notification", requestOptionsNotification);
+            console.log(content);
+        }
+    </script>
+</html>

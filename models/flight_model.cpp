@@ -98,3 +98,45 @@ vector<string> get_flight(string flight_id) {
     response.push_back(flight_rows);
     return response;
 }
+
+vector<string> update_flight(string _flight_id, string _date, string _time) {
+    string flight_id = split(_flight_id, "=")[1];
+    string date = split(_date, "=")[1];
+    string time = split(_time, "=")[1];
+
+    flight_row_count = 0;
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    
+    sql = "UPDATE flights SET 'date' = '";
+    sql.append(date);
+    sql.append("', 'time' = '");
+    sql.append(time);
+    sql.append("' WHERE flight_id = '");
+    sql.append(flight_id);
+    sql.append("';");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), flightsCallback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back("");
+    return response;
+}

@@ -77,6 +77,7 @@ vector<string> get_tickets(string flight_id) {
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
         response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
         response.push_back("");
         return response;
@@ -89,7 +90,7 @@ vector<string> get_tickets(string flight_id) {
 }
 
 vector<string> get_owned_tickets(string username) {
-        ticket_row_count = 0;
+    ticket_row_count = 0;
     ticket_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;
@@ -110,6 +111,7 @@ vector<string> get_owned_tickets(string username) {
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
         response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
         response.push_back("");
         return response;
@@ -142,6 +144,7 @@ vector<string> get_ticket(string id) {
     rc = sqlite3_exec(db, sql.c_str(), ticketCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
         response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
         response.push_back("");
         return response;

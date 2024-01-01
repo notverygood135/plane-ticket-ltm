@@ -2,39 +2,32 @@
 <html>
     <link rel="stylesheet" href="../static/index.css">
     <body>
-        <h1>hello <span id="username"></span></h1>
-
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/login" class="auth">login</a>
-        <a href="http://localhost:8001/register" class="auth">register</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
-
-        <div id="flights-info">
-            <div id="flights-search">
-                <input type="text" name="from" id="from" placeholder="From">
-                <input type="text" name="to" id="to" placeholder="To">
-                <input type="airline" name="airline" id="airline" placeholder="Airline">
-                <input type="datetime-local" name="datetime" id="datetime">
-                <button type="button" onclick="filter()">Filter</button>
-                <select name="sort" id="sort" onchange="sortFlights()">
-                    <option value="flight">Flight</option>
-                    <option value="time">Time</option>
-                    <option value="airline">Airline</option>
-                </select>
+        <div id="manage">
+            <a href="http://localhost:8001">home</a>
+            <div id="flights-info">
+                <div id="flights-search">
+                    <input type="text" name="from" id="from" placeholder="From">
+                    <input type="text" name="to" id="to" placeholder="To">
+                    <input type="airline" name="airline" id="airline" placeholder="Airline">
+                    <input type="datetime-local" name="datetime" id="datetime">
+                    <button type="button" onclick="filter()">Filter</button>
+                    <select name="sort" id="sort" onchange="sortFlights()">
+                        <option value="flight">Flight</option>
+                        <option value="time">Time</option>
+                        <option value="airline">Airline</option>
+                    </select>
+                </div>
+                <div id="flights-column">
+                    <span>Flight</span>
+                    <span>From</span>
+                    <span>To</span>
+                    <span>Date</span>
+                    <span>Time</span>
+                    <span>Airline</span>
+                </div>
+                <ul id="flights"></ul>
             </div>
-            <div id="flights-column">
-                <span>Flight</span>
-                <span>From</span>
-                <span>To</span>
-                <span>Date</span>
-                <span>Time</span>
-                <span>Airline</span>
-            </div>
-            <ul id="flights"></ul>
         </div>
-
     </body>
 
     <script>
@@ -43,21 +36,10 @@
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
         const username = localStorage.getItem("username");
-        const authElements = document.querySelectorAll(".auth");
-        const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
-            authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "block");
-        }
-        else {
-            authElements.forEach(item => item.style.display = "block");
-            navElements.forEach(item => item.style.display = "none");
-        }
 
-        // xoa data nguoi dung duoc luu trong ls
-        function logout() {
-            localStorage.clear();
+        if (username != "admin") {
+            const manage = document.getElementById("manage");
+            manage.innerText = "";
         }
 
         function filter() {
@@ -98,8 +80,8 @@
                     li.appendChild(span);
                 }
                 const a = document.createElement("a");
-                a.setAttribute("href", `http://localhost:8001/flight/${ticket.flight_id}`);
-                a.innerHTML = "Book";
+                a.setAttribute("href", `http://localhost:8001/manage/flight/${ticket.flight_id}`);
+                a.innerHTML = "Edit";
                 li.appendChild(a);
                 ul.appendChild(li);
             });
@@ -143,15 +125,6 @@
             renderFlights();
         })
 
-        fetch(`/unread/${username}`, {
-            method: "GET",
-        })
-        .then(response => {
-            return(response.text());
-        })
-        .then(data => {
-            const unread = document.getElementById("unread");
-            unread.innerText = JSON.parse(data)[0].count;
-        })
+        
     </script>
 </html>
