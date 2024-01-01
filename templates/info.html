@@ -5,13 +5,20 @@
         <div>
             <button type="button" onclick="cancel()">Cancel</button>
             <button type="button" onclick="exchange()">Exchange</button>
-            <button type="button" onclick="print_ticket()">Print</button>
+            <button type="button" onclick="print()">Exchange</button>
+            <button type="button" id="generate" >QRcode</button>
         </div>
+       
+        <div class="body_qr"></div>
+        <div id="down"> <a href="" id="download" download="QR_Code.png">Download</a></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     </body>
     <script>
         const url = window.location.pathname;
         const id = url.split("/")[2];
-
+        const generate= document.getElementById('generate');
+        const qrcodebox = document.querySelector('.body_qr');
+        const down= document.querySelector('#down');
         function renderTicket(ticket) {
             const ticketInfo = document.getElementById("ticket-info");
             for (let key in ticket) {
@@ -19,9 +26,10 @@
                 div.className = "ticket-info-column";
                 div.innerHTML = ticket[key];
                 ticketInfo.appendChild(div);
+                console.log(typeof ticket[key]);
             }
         }
-
+        
         fetch(`/ticket/${id}`, {
             method: "GET",
         })
@@ -31,8 +39,9 @@
         .then(data => {
             const ticket = JSON.parse(data)[0];
             renderTicket(ticket);
+            textGen(ticket);
         })
-
+        
         function cancel() {
             fetch(`/own/${id}`, {
                 method: "DELETE",
@@ -61,5 +70,53 @@
         function print_ticket() {
             window.print();
         }
+        //tao ma qr
+        //dat hidden cho button download
+        down.style.visibility='hidden';
+        //lay info cho qr
+        var qrInfo='';
+        function textGen(ticket){
+        
+            for (let key in ticket) {
+               
+                qrInfo =qrInfo +ticket[key];
+              
+            }
+            //bat su kien click tren nut tao qrcode
+            generate.addEventListener('click',(e)=>{
+            e.preventDefault();
+            isEmpty(qrInfo);     
+            down.style.visibility='visible'; // hien thi button download khi da hien thi qrcode
+
+        });
+        }
+        //kiem tra info rong hay ko
+        function isEmpty(qrInfo){
+            qrInfo.length>0?generateQRCode(qrInfo):alert('no information');
+        }
+        //gennerate qr
+        function generateQRCode(qrInfo){
+            
+            qrcodebox.innerHTML="";
+            new QRCode(qrcodebox,{
+                text:qrInfo,
+                height:100,
+                width:100,
+                colorLight:"#fff",
+                colorDark:"#000"
+            });
+
+        }
+        //dowload qr
+        download.addEventListener('click',()=>{
+            let img=document.querySelector('.body_qr img');
+            if(img !== null){
+                let imgAtrr=img.getAttribute('src');
+                
+                    download.setAttribute("href",imgAtrr);
+            }
+        });
+    
     </script>
+    
 </html>
