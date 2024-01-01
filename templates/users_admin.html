@@ -1,25 +1,88 @@
 <!DOCTYPE html>
 <html>
     <body>
-        admin users page
+        <div id="manage">
+            <a href="http://localhost:8001">home</a>
+            <ul id="users"></ul>
+        </div>
     </body>
     <script>
         const username = localStorage.getItem("username");
-        if (username == null || username == "") {
-            window.location = "http://localhost:8001/error"
+        let users = [];
+
+        if (username != "admin") {
+            const manage = document.getElementById("manage");
+            manage.innerText = "";
         }
 
-        fetch(`/user/${username}`, {
-            method: "GET"
+        fetch("/users", {
+            method: "GET",
         })
         .then(response => {
-            return response.text();
+            return(response.text());
         })
         .then(data => {
-            const user = JSON.parse(data)[0];
-            if (user.type == "0") {
-                window.location = "http://localhost:8001/error";
-            }
+            users = JSON.parse(data);
+            const ul = document.getElementById("users");
+            ul.innerHTML = ""; // xoa cac element da co de them tu dau
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.className = "user";
+                for (const key in user) {
+                    const span = document.createElement("span");
+                    span.textContent = user[key];
+                    li.appendChild(span);
+                }
+                const changeType = document.createElement("button");
+                changeType.addEventListener("click", e => {
+                    const newType = user.type == "1" ? "0" : "1";
+                    fetch('/users', {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "text/html"
+                        },
+                        body: `username=${user.username}&type=${newType}`
+                    })
+                    .then(response => {
+                        return response.status;
+                    })
+                    .then(status => {
+                        if (status == 200) {
+                            alert("User updated successfully");
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Error");
+                        }
+                    });
+                });
+                changeType.innerText = "Make admin";
+
+                const deleteUser = document.createElement("button");
+                deleteUser.addEventListener("click", e => {
+                    const type = 
+
+                    fetch('/users', {
+                        method: "DELETE",
+                    })
+                    .then(response => {
+                        return response.status;
+                    })
+                    .then(status => {
+                        if (status == 200) {
+                            alert("User deleted successfully");
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Error");
+                        }
+                    });
+                });
+                deleteUser.innerText = "Delete";
+                li.appendChild(changeType);
+                li.appendChild(deleteUser);
+                ul.appendChild(li);
+            });
         })
     </script>
 </html>

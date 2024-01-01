@@ -90,15 +90,19 @@
                     return(response.text());
                 })
                 .then(data => {
-                    data = data.slice(0, -4)
-                    console.log(data);
-                    if (data != "") {
-                        window.location.replace("http://localhost:8001");
-                        localStorage.setItem("username", data);
+                  console.log(data);
+                    if (data[0] != "[") {
+                      alert("Invalid username or password");
+                      return;
                     }
-                    else {
-                        alert("Invalid username or password");
+                    const loggedInUser = JSON.parse(data)[0];
+                    if (loggedInUser.type == "1") {
+                      window.location.replace("http://localhost:8001/manage/flights");
                     }
+                    else if (loggedInUser.type == "0") {
+                      window.location.replace("http://localhost:8001");
+                    }
+                    localStorage.setItem("username", loggedInUser.username);
                 })
             }
         </script>

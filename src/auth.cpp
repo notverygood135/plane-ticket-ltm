@@ -6,11 +6,32 @@
 #include "../include/auth.hpp"
 using namespace std;
 
-int rows = 0;
+string rows = "";
+int row_count = 0;
 
 static int callback(void *data, int argc, char **argv, char **column) {
-    rows = argc;
-    cout << "records found: " << argc << endl;
+    string row;
+    if (row_count > 0) {
+        row = ", {";
+    }
+    else {
+        row = "{";
+    }
+    for (int i = 0; i < argc; i++) {
+        row.append("\"");
+        row.append(column[i]);
+        row.append("\"");
+        row.append(": \"");
+        row.append(argv[i]);
+        row.append("\"");
+        if (i < argc - 1) {
+            row.append(", ");
+        }
+    }
+    row.append("}");
+    cout << row << endl; 
+    rows.append(row);
+    row_count++;
     return 0;
 }
 
@@ -54,7 +75,8 @@ vector<string> create_user(string _username, string _password, string _confirm) 
 }
 
 vector<string> login(string _username, string _password) {
-    rows = 0;
+    row_count = 0;
+    rows = "[";
     string username = split(_username, "=")[1];
     string password = split(_password, "=")[1];
 
@@ -83,7 +105,7 @@ vector<string> login(string _username, string _password) {
         response.push_back("");
         return response;
     }
-    if (!rows) {
+    if (!row_count) {
         cout << "username or password is incorrect" << endl;
         sqlite3_close(db);
         response.push_back("HTTP/1.1 401 Unauthorized\r\n\r\n");
@@ -92,7 +114,8 @@ vector<string> login(string _username, string _password) {
     }
     cout << "successfully logged in user " << username << endl;
     sqlite3_close(db);
+    rows.append("]");
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
-    response.push_back(username);
+    response.push_back(rows);
     return response;
 }

@@ -82,6 +82,9 @@ vector<string> get(string route) {
         string flight_id = route_parse[route_parse.size() - 1];
         response = get_passengers(flight_id);
     }
+    else if (parsed_route == "users") {
+        response = get_users();
+    }
 
     else {
         cout << "unknown route: " << route << endl;
@@ -115,6 +118,9 @@ vector<string> put(string route, string payload) {
     if (parsed_route == "read") {
         return update_notifications(route_parse[route_parse.size() - 1]);
     }
+    else if (parsed_route == "users") {
+        return update_user(body[0], body[1]);
+    }
     else if (parsed_route == "flights") {
         return update_flight(body[0], body[1], body[2]);
     }
@@ -131,6 +137,10 @@ vector<string> _delete(string route, string payload) {
 
     if (parsed_route == "own") {
         return delete_ownership(body[0]);
+    }
+    else if (parsed_route == "users") {
+        string username = route_parse[route_parse.size() - 1];
+        return delete_user(username);
     }
     else if (parsed_route == "notification") {
         string username = route_parse[route_parse.size() - 1];

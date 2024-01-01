@@ -19,6 +19,8 @@ vector<string> create_notification(string _username, string _content, string _da
 vector<string> update_notifications(string username);
 vector<string> delete_notifications(string username);
 
-
 vector<string> get_user(string username);
+vector<string> get_users();
 vector<string> get_passengers(string flight_id);
+vector<string> delete_user(string username);
+vector<string> update_user(string _username, string _type);
