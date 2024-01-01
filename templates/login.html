@@ -52,10 +52,7 @@
                               <p class="mb-0 me-2">Don't have an account?</p>
                               <button type="button" class="btn btn-outline-danger""> <a  href="http://localhost:8001/register">Create new account</a></button>
                             </div>
-          
-                            
-                        </div>
-          
+                          </div>
                         </div>
                       </div>
                       <div class="col-lg-6 d-flex align-items-center gradient-custom-2">
@@ -72,21 +69,20 @@
               </div>
             </div>
           </section>
-          <!-- <div>
-          <h1>login</h1>
+          <!-- <h1>login</h1>
           <input type="text" name="username" id="username" placeholder="Username">
           <input type="password" name="password" id="password" placeholder="Password">
-          <button type="button" onclick="submit()">Submit</button>
-        </div> -->
+          <button type="button" onclick="submit()">Submit</button> -->
         <script>
             function submit() {
+              console.log("a");
                 let username = document.getElementById("username").value;
                 let password = document.getElementById("password").value;
                 console.log(`username: ${username}, password: ${password}`);
                 fetch("/login", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "text/html"
+                        "Content-Type": "multipart/form-data"
                     },
                     body: `username=${username}&password=${password}`
                 })
@@ -95,7 +91,8 @@
                 })
                 .then(data => {
                     data = data.slice(0, -4)
-                    if (data != "NOT OK") {
+                    console.log(data);
+                    if (data != "") {
                         window.location.replace("http://localhost:8001");
                         localStorage.setItem("username", data);
                     }

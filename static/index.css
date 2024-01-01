@@ -2,17 +2,17 @@ h1 {
     color: red;
 }
 
-#tickets {
+#flights {
     padding: 0;
     width: 100%;
 }
 
-li, #tickets-column {
+li, #flights-column {
     display: grid;
-    grid-template-columns: 1fr 3fr 3fr 2fr 1.5fr 3fr 1fr 1fr 2fr 1fr;
+    grid-template-columns: 1fr 3fr 3fr 2fr 1.5fr 3fr 1fr;
 }
 
-#tickets-column span, li span {
+#flights-column span, li span {
     margin: 0 10px;
     display: flex;
     justify-content: center;

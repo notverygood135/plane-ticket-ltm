@@ -46,7 +46,16 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
     sql.append(security_code);
     sql.append("', '");
     sql.append(expiration_date);
-    sql.append("');");
+    sql.append("');\n");
+    sql.append("UPDATE tickets SET owned = 1 WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("';\n");
+    sql.append("UPDATE users SET money = money - (SELECT price from tickets WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("') WHERE username = '");
+    sql.append(username);
+    sql.append("';");
+    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
 
     if (rc != SQLITE_OK) {
@@ -55,7 +64,6 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
         response.push_back("");
         return response;
     }
-    cout << "successfully bought ticket " << username << endl;
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
     response.push_back("OK");
@@ -78,9 +86,18 @@ vector<string> delete_ownership(string _ticket_id) {
         response.push_back("");
         return response;
     }
-    sql = "DELETE FROM own WHERE ticket_id = \"";
+    
+    sql = "UPDATE tickets SET owned = 0 WHERE ticket_id = '";
     sql.append(ticket_id);
-    sql.append("\";");
+    sql.append("';\n");
+    sql.append("UPDATE users SET money = money + (SELECT price from tickets WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("') / 2 WHERE username = (SELECT username FROM own WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("');\n");
+    sql.append("DELETE FROM own WHERE ticket_id = '");
+    sql.append(ticket_id);
+    sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {

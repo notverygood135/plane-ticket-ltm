@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <div id="ticket-info"></div>
+        <div id="ticket-info">
+            <div class="ticket-info-column">Flight: <span id="flight"></span></div>
+            <div class="ticket-info-column">From: <span id="from"></span></div>
+            <div class="ticket-info-column">To: <span id="to"></span></div>
+            <div class="ticket-info-column">Date: <span id="date"></span></div>
+            <div class="ticket-info-column">Time: <span id="time"></span></div>
+            <div class="ticket-info-column">Price: <span id="price"></span></div>
+        </div>
         <div id="user-form">
             <label for="number">Credit Card</label>            
             <input type="text" name="number" id="number">
@@ -20,15 +27,16 @@
     <script>
         const url = window.location.pathname;
         const id = url.split("/")[2];
+        let ticket = null;
 
         function renderTicket(ticket) {
             const ticketInfo = document.getElementById("ticket-info");
-            for (let key in ticket) {
-                const div = document.createElement("div");
-                div.className = "ticket-info-column";
-                div.innerHTML = ticket[key];
-                ticketInfo.appendChild(div);
-            }
+            document.getElementById("flight").innerText = ticket.flight_id;
+            document.getElementById("from").innerText = ticket.from;
+            document.getElementById("to").innerText = ticket.to;
+            document.getElementById("date").innerText = ticket.date;
+            document.getElementById("time").innerText = ticket.time;
+            document.getElementById("price").innerText = ticket.price;
         }
 
         fetch(`/ticket/${id}`, {
@@ -38,7 +46,8 @@
             return(response.text());
         })
         .then(data => {
-            const ticket = JSON.parse(data)[0];
+            // console.log(data);
+            ticket = JSON.parse(data)[0];
             renderTicket(ticket);
         })
 
@@ -53,20 +62,51 @@
             let securityCode = document.getElementById("security-code").value;
             let fullName = document.getElementById("full-name").value;
             console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
-            fetch("/own", {
+            
+            const requestOptionsOwn = {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
                 },
                 body: 
                     `username=${username}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
-            })
+            }
+
+            const content = `Boarding pass confirmed\\nDear ${username},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
+
+            const date = new Date();
+            const dateString = date.toISOString().split('T')[0];
+            const timeString = date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: "numeric",
+                minute: "numeric"
+            });
+
+            const requestOptionsNotification = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: 
+                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+            }
+            
+            fetch("/own", requestOptionsOwn)
             .then(response => {
                 return(response.status);
             })
             .then(status => {
                 if (status == 200) {
-                    window.location.replace("http://localhost:8001");
+                    fetch("/notification", requestOptionsNotification)
+                    .then(response => {
+                        return(response.status);
+                    })
+                    .then(status => {
+                        if (status == 200) {
+                            alert("You have a new notification!");
+                            window.location.replace("http://localhost:8001/notifications");
+                        }
+                    })
                 }
                 else {
                     alert("Error");

@@ -6,19 +6,38 @@
 #include "../include/auth.hpp"
 using namespace std;
 
-int rows = 0;
+int user_row_count = 0;
+string user_rows;
 
 static int callback(void *data, int argc, char **argv, char **column) {
-    rows = argc;
-    cout << "records found: " << argc << endl;
+    string row;
+    if (user_row_count > 0) {
+        row = ", {";
+    }
+    else {
+        row = "{";
+    }
+    for (int i = 0; i < argc; i++) {
+        row.append("\"");
+        row.append(column[i]);
+        row.append("\"");
+        row.append(": \"");
+        row.append(argv[i]);
+        row.append("\"");
+        if (i < argc - 1) {
+            row.append(", ");
+        }
+    }
+    row.append("}");
+    cout << row << endl; 
+    user_rows.append(row);
+    user_row_count++;
     return 0;
 }
 
-vector<string> create_user(string _username, string _password, string _confirm) {
-    string username = split(_username, "=")[1];
-    string password = split(_password, "=")[1];
-    string confirm = split(_confirm, "=")[1];
-    
+vector<string> get_user(string username) {
+    user_row_count = 0;
+    user_rows = "[";
     sqlite3 *db;
     char *err_msg = 0;
     int rc;
@@ -32,67 +51,54 @@ vector<string> create_user(string _username, string _password, string _confirm) 
         response.push_back("");
         return response;
     }
-    sql = "INSERT INTO users VALUES ('";
+    sql = "SELECT username, money, type FROM users WHERE username = '";
     sql.append(username);
-    sql.append("', '");
-    sql.append(password);
-    sql.append("', 10000.0, 0);");
-    cout << sql << endl;
-    rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
-
-    if (rc != SQLITE_OK) {
-        cout << "error: " << err_msg << endl;
-        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
-        response.push_back("");
-        return response;
-    }
-    cout << "successfully registered user " << username << endl;
-    sqlite3_close(db);
-    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
-    response.push_back("OK");
-    return response;
-}
-
-vector<string> login(string _username, string _password) {
-    rows = 0;
-    string username = split(_username, "=")[1];
-    string password = split(_password, "=")[1];
-
-    sqlite3 *db;
-    char *err_msg = 0;
-    int rc;
-    string sql;
-    vector<string> response;
-
-    rc = sqlite3_open("db/plane.db", &db);
-    if (rc) {
-        cout << "Cannot open database" << endl;
-        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
-        response.push_back("");
-        return response;
-    }
-    sql = "SELECT * FROM users WHERE username = '";
-    sql.append(username);
-    sql.append("' AND password = '");
-    sql.append(password);
     sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
         response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
         response.push_back("");
         return response;
     }
-    if (!rows) {
-        cout << "username or password is incorrect" << endl;
-        sqlite3_close(db);
-        response.push_back("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    user_rows.append("]");
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(user_rows);
+    return response;
+}
+
+vector<string> get_passengers(string flight_id) {
+    user_row_count = 0;
+    user_rows = "[";
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
         response.push_back("");
         return response;
     }
-    cout << "successfully logged in user " << username << endl;
+    sql = "SELECT username FROM own JOIN tickets ON own.ticket_id = tickets.ticket_id JOIN flights ON tickets.flight_id = flights.flight_id WHERE flights.flight_id = '";
+    sql.append(flight_id);
+    sql.append("';");
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    user_rows.append("]");
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
-    response.push_back(username);
+    response.push_back(user_rows);
     return response;
 }

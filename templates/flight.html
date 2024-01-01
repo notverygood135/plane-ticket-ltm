@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../static/flight.css">
+    <body>
+        <h1>hello <span id="username"></span></h1>
+
+        <a href="http://localhost:8001">home</a>
+        <a href="http://localhost:8001/login" class="auth">login</a>
+        <a href="http://localhost:8001/register" class="auth">register</a>
+        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+
+        <div id="flights-info">
+            <div id="flight-info">
+                <div class="flight-info-column">Flight: <span id="flight"></span></div>
+                <div class="flight-info-column">From: <span id="from"></span></div>
+                <div class="flight-info-column">To: <span id="to"></span></div>
+                <div class="flight-info-column">Airline: <span id="airline"></span></div>
+                <div class="flight-info-column">Date: <span id="date"></span></div>
+                <div class="flight-info-column">Time: <span id="time"></span></div>
+            </div>
+            <ul id="tickets"></ul>
+        </div>
+    </body>
+
+    <script>
+        const url = window.location.pathname;
+        const id = url.split("/")[2];
+
+        let tickets = [];
+        let filteredTickets = [];
+
+        // hien thi elements tuy thuoc vao trang thai dang nhap
+        const username = localStorage.getItem("username");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (username != null) {
+            document.getElementById("username").innerHTML = username;
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "block");
+        }
+        else {
+            authElements.forEach(item => item.style.display = "block");
+            navElements.forEach(item => item.style.display = "none");
+        }
+
+        // xoa data nguoi dung duoc luu trong ls
+        function logout() {
+            localStorage.clear();
+        }
+
+        function renderTickets() {
+            const ul = document.getElementById("tickets");
+            ul.innerHTML = ""; // xoa cac element da co de them tu dau
+
+            filteredTickets.forEach(ticket => {
+                const a = document.createElement("a");
+                a.className = "ticket";
+                const ticketInfo = document.getElementById("ticket-info");
+                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
+                a.textContent = ticket.seat;
+                if (ticket.owned == "1") {
+                    a.className = "disabled";
+                }
+                ul.appendChild(a);
+            });
+        }
+
+        fetch(`/flights/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const flightData = JSON.parse(data)[0];
+            document.getElementById("flight").innerText = flightData.flight_id;
+            document.getElementById("from").innerText = flightData.from;
+            document.getElementById("to").innerText = flightData.to;
+            document.getElementById("airline").innerText = flightData.airline;
+            document.getElementById("date").innerText = flightData.date;
+            document.getElementById("time").innerText = flightData.time;
+        })
+
+        fetch(`/tickets/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            tickets = JSON.parse(data);
+            filteredTickets = tickets;
+            renderTickets();
+        })
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
+        })
+    </script>
+</html>
