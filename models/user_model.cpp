@@ -155,6 +155,9 @@ vector<string> delete_user(string username) {
     sql.append("DELETE FROM notifications WHERE username = '");
     sql.append(username);
     sql.append("';\n");
+    sql.append("UPDATE tickets SET owned = 0 WHERE ticket_id IN (SELECT ticket_id FROM own WHERE username = '");
+    sql.append(username);
+    sql.append("');\n");
     sql.append("DELETE FROM own WHERE username = '");
     sql.append(username);
     sql.append("';");

@@ -49,6 +49,16 @@
             document.getElementById("username").innerHTML = username;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "block");
+            fetch(`/unread/${username}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                const unread = document.getElementById("unread");
+                unread.innerText = JSON.parse(data)[0].count;
+            })
         }
         else {
             authElements.forEach(item => item.style.display = "block");
@@ -141,17 +151,6 @@
             flights = JSON.parse(data);
             filteredFlights = flights;
             renderFlights();
-        })
-
-        fetch(`/unread/${username}`, {
-            method: "GET",
-        })
-        .then(response => {
-            return(response.text());
-        })
-        .then(data => {
-            const unread = document.getElementById("unread");
-            unread.innerText = JSON.parse(data)[0].count;
         })
     </script>
 </html>

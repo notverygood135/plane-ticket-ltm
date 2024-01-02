@@ -60,9 +60,7 @@
 
                 const deleteUser = document.createElement("button");
                 deleteUser.addEventListener("click", e => {
-                    const type = 
-
-                    fetch('/users', {
+                    fetch(`/users/${user.username}`, {
                         method: "DELETE",
                     })
                     .then(response => {
