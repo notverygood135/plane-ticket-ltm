@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="../static/flight.css">
-
+    <link rel="stylesheet" href="../static/flight.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <body>
-    <h1>hello <span id="username"></span></h1>
-
-    <a href="http://localhost:8001">home</a>
-    <a href="http://localhost:8001/login" class="auth">login</a>
-    <a href="http://localhost:8001/register" class="auth">register</a>
-    <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-    <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-    <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+    <div id="navbar">
+        <a href="http://localhost:8001">home</a>
+        <a href="http://localhost:8001/login" class="auth">login</a>
+        <a href="http://localhost:8001/register" class="auth">register</a>
+        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+    </div>
 
     <div id="flights-info">
         <div id="flight-info">
@@ -24,7 +26,7 @@
         <ul id="tickets"></ul>
         
     </div>
-    <div id="exchange"> Exchange </div>
+    <button id="exchange"> Exchange </button>
 </body>
 
 <script>
@@ -45,12 +47,11 @@
     const authElements = document.querySelectorAll(".auth");
     const navElements = document.querySelectorAll(".nav");
     if (username != null) {
-        document.getElementById("username").innerHTML = username;
         authElements.forEach(item => item.style.display = "none");
-        navElements.forEach(item => item.style.display = "block");
+        navElements.forEach(item => item.style.display = "flex");
     }
     else {
-        authElements.forEach(item => item.style.display = "block");
+        authElements.forEach(item => item.style.display = "flex");
         navElements.forEach(item => item.style.display = "none");
     }
 
@@ -264,9 +265,9 @@
             renderTickets();
         })
 
-    fetch(`/unread/${username}`, {
-        method: "GET",
-    })
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
         .then(response => {
             return (response.text());
         })

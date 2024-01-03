@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
+    <link rel="stylesheet" href="../static/info.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="navbar">
-            <a href="http://localhost:8001/" class="nav">home</a>
+            <a href="http://localhost:8001">home</a>
             <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-            <a href="http://localhost:8001/notifications" class="nav">notifications</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
             <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
         </div>
         <div id="ticket-info">
@@ -18,7 +22,7 @@
             <div>Seat: <span id="seat"></span></div>
             <div>Price: <span id="price"></span></div>
         </div>
-        <div>
+        <div id="button-container">
             <button type="button" onclick="cancel()">Cancel</button>
             <button type="button" ><a id="exchange"style="text-decoration: none;">Exchange</a></button>
             <button type="button" onclick="print()">Print</button>
@@ -30,6 +34,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     </body>
     <script>
+        const username = localStorage.getItem("username");
         const url = window.location.pathname;
         const id = url.split("/")[2];
         const generate= document.getElementById('generate');
@@ -145,6 +150,17 @@
                 
                     download.setAttribute("href",imgAtrr);
             }
+        });
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
         });
     </script>
     

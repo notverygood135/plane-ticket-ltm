@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    width: 100vw;
+    box-shadow: #aaaaaa 0 2px 2px;
+}
+
+#navbar a {
+    height: 100%;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    text-transform: capitalize;
+}
+
+#navbar a:hover {
+    background: #eeeeee;
+}
+
+a {
+    text-decoration: none;
+}
+
+#flights-info, #ticket-info{
+    margin: 1rem;
+}
+
+ul {
+    border: #aaaaaa solid 1px;
+    border-bottom: none;
+}
+
+#flights-column {
+    height: 3rem;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    border: #aaaaaa solid 1px;
+}
+
+li {
+    height: 3rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: #aaaaaa solid 1px;
+}
+
+li a {
+    height: 100%;
+    background: #3399cc;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+li a:hover {
+    background: #52a3cc;
+}
+
+#flights {
+    padding: 0;
+    width: 100%;
+}
+
+li, #flights-column {
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 2fr 1.5fr 3fr 1fr;
+}
+
+#flights-column span, li span {
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+}

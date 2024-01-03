@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
     <link rel="stylesheet" href="../static/inventory.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="navbar">
             <a href="http://localhost:8001">home</a>
             <a href="http://localhost:8001/inventory" class="nav">inventory</a>
             <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
             <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
-            <div>money: <span id="money"></span></div>
+            <div>Balance: $<span id="money"></span></div>
         </div>
-
-        <h1><span id="username"></span>'s tickets</h1>
 
         <div id="tickets-info">
             <div id="tickets-search">
@@ -40,7 +41,6 @@
         if (username == null || username == "") {
             window.location = "http://localhost:8001/login"
         }
-        document.getElementById("username").innerHTML = username;
         
         let tickets = [];
         let filteredTickets = [];

@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/exchange.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
-        <h1><span id="username"></span>'s tickets</h1>
+        <div id="navbar">
+            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+            <div>Balance: $<span id="money"></span></div>
+        </div>
 
-
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
-
-        <div>money: <span id="money"></span></div>
         <div class="main">
-        <div id="ticket-info"></div>
+        <div id="ticket-info">
+            <div>Flight: <span id="flight"></span></div>
+            <div>From: <span id="from"></span></div>
+            <div>To: <span id="to"></span></div>
+            <div>Date: <span id="date"></span></div>
+            <div>Time: <span id="time"></span></div>
+            <div>Airline: <span id="airline"></span></div>
+            <div>Ticket: <span id="ticket"></span></div>
+            <div>Seat: <span id="seat"></span></div>
+            <div>Price: <span id="price"></span></div>
+        </div>
         <div id="flights-info">
             <div id="flights-search">
                 <input type="text" name="from" id="from" placeholder="From">
@@ -43,8 +55,6 @@
     <script>
         // head 
         const username = localStorage.getItem("username");
-
-        document.getElementById("username").innerHTML = username;
         fetch(`/user/${username}`, {
             method: "GET"
         })
@@ -63,14 +73,28 @@
         const url = window.location.pathname;
         const id = url.split("/")[2];
         localStorage.setItem('ticket_id_old',id);
+        let ticket = {};
+
         function renderTicket(ticket) {
-            const ticketInfo = document.getElementById("ticket-info");
-            for (let key in ticket) {
-                const div = document.createElement("div");
-                div.className = "ticket-info-column";
-                div.innerHTML = ticket[key];
-                ticketInfo.appendChild(div);
-            }
+            const flightId = document.getElementById("flight");
+            const from = document.getElementById("from");
+            const to = document.getElementById("to");
+            const date = document.getElementById("date");
+            const time = document.getElementById("time");
+            const airline = document.getElementById("airline");
+            const ticketId = document.getElementById("ticket");
+            const seat = document.getElementById("seat");
+            const price = document.getElementById("price");
+
+            flightId.innerText = ticket.flight_id;
+            from.innerText = ticket.from;
+            to.innerText = ticket.to;
+            date.innerText = ticket.date;
+            time.innerText = ticket.time;
+            airline.innerText = ticket.airline;
+            ticketId.innerText = ticket.ticket_id;
+            seat.innerText = ticket.seat;
+            price.innerText = ticket.price;
         }
         
         fetch(`/ticket/${id}`, {
@@ -80,7 +104,7 @@
             return(response.text());
         })
         .then(data => {
-            const ticket = JSON.parse(data)[0];
+            ticket = JSON.parse(data)[0];
             renderTicket(ticket);
         })
         

@@ -1,33 +1,60 @@
 <!DOCTYPE html>
 <html>
+    <link rel="stylesheet" href="../static/buy.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
-        <div id="ticket-info">
-            <div class="ticket-info-column">Flight: <span id="flight"></span></div>
-            <div class="ticket-info-column">From: <span id="from"></span></div>
-            <div class="ticket-info-column">To: <span id="to"></span></div>
-            <div class="ticket-info-column">Date: <span id="date"></span></div>
-            <div class="ticket-info-column">Time: <span id="time"></span></div>
-            <div class="ticket-info-column">Price: <span id="price"></span></div>
+        <div id="navbar">
+            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/login" class="auth">login</a>
+            <a href="http://localhost:8001/register" class="auth">register</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
         </div>
-        <div id="user-form">
-            <label for="number">Credit Card</label>            
-            <input type="text" name="number" id="number">
 
-            <label for="number">Expiration Date</label>    
-            <input type="date" name="expiration-date" id="expiration-date">
+        <section id="user-form-container">
+            <div id="ticket-info">
+                <div class="ticket-info-column">Flight: <span id="flight"></span></div>
+                <div class="ticket-info-column">From: <span id="from"></span></div>
+                <div class="ticket-info-column">To: <span id="to"></span></div>
+                <div class="ticket-info-column">Date: <span id="date"></span></div>
+                <div class="ticket-info-column">Time: <span id="time"></span></div>
+                <div class="ticket-info-column">Price: <span id="price"></span></div>
+            </div>
+            <div id="user-form">
+                <label for="number">Credit Card</label>            
+                <input type="text" name="number" id="number">
 
-            <label for="security-code">Security Code</label>    
-            <input type="text" name="security-code" id="security-code">
+                <label for="number">Expiration Date</label>    
+                <input type="date" name="expiration-date" id="expiration-date">
 
-            <label for="full-name">Card Holder Name</label>
-            <input type="text" name="full-name" id="full-name">
-            <button type="button" onclick="submit()">Submit</button>
-        </div>
+                <label for="security-code">Security Code</label>    
+                <input type="text" name="security-code" id="security-code">
+
+                <label for="full-name">Card Holder Name</label>
+                <input type="text" name="full-name" id="full-name">
+                
+                <button type="button" onclick="submit()">Submit</button>
+            </div>
+        </section>
     </body>
     <script>
         const url = window.location.pathname;
         const id = url.split("/")[2];
         let ticket = null;
+        const username = localStorage.getItem("username");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (username != null) {
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "flex");
+        }
+        else {
+            authElements.forEach(item => item.style.display = "flex");
+            navElements.forEach(item => item.style.display = "none");
+        }
 
         function renderTicket(ticket) {
             const ticketInfo = document.getElementById("ticket-info");
@@ -49,6 +76,18 @@
             // console.log(data);
             ticket = JSON.parse(data)[0];
             renderTicket(ticket);
+        })
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return (response.text());
+        })
+        .then(data => {
+            console.log(data);
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
         })
 
         function submit() {

@@ -27,7 +27,7 @@
     background: #eeeeee;
 }
 
-#flights-info {
+#flight-info {
     margin: 1rem;
 }
 
@@ -57,6 +57,7 @@ ul a {
 
 ul a:hover {
     background: #52a3cc;
+    cursor: pointer;
 }
 
 a.disabled {
@@ -67,3 +68,16 @@ a.disabled {
     text-decoration: none;
 }
 
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    width: 10rem;
+    margin: 1.5rem;
+    background: #3399cc;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+}
