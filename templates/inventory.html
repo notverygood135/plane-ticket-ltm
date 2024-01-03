@@ -2,15 +2,15 @@
 <html>
     <link rel="stylesheet" href="../static/inventory.css">
     <body>
+        <div id="navbar">
+            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+            <div>money: <span id="money"></span></div>
+        </div>
+
         <h1><span id="username"></span>'s tickets</h1>
-
-
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
-
-        <div>money: <span id="money"></span></div>
 
         <div id="tickets-info">
             <div id="tickets-search">
@@ -119,6 +119,7 @@
             return response.text();
         })
         .then(data => {
+            console.log(data);
             const user = JSON.parse(data)[0];
             const money = document.getElementById("money");
             money.innerText = user.money;

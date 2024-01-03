@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <a href="http://localhost:8001/" class="nav">home</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        <div id="navbar">
+            <a href="http://localhost:8001/" class="nav">home</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications</a>
+            <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        </div>
 
         <div onclick="clearNotifications()">clear</div>
         <ul id="notifications"></ul>

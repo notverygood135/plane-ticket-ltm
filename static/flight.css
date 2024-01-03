@@ -1,20 +1,69 @@
-h1 {
-    color: red;
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
 }
 
-#tickets {
-    padding: 0;
-    width: 100%;
+#navbar {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    width: 100vw;
+    box-shadow: #aaaaaa 0 2px 2px;
+}
+
+#navbar a {
+    height: 100%;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    text-transform: capitalize;
+}
+
+#navbar a:hover {
+    background: #eeeeee;
+}
+
+#flights-info {
+    margin: 1rem;
+}
+
+a {
+    text-decoration: none;
 }
 
 ul {
     display: grid;
+    margin: 1rem;
+    width: 50vw;
+    height: 20vw;
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
+ul a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    width: 3rem;
+    margin: 0.5rem;
+    background: #3399cc;
+    color: white;
+    
+}
+
+ul a:hover {
+    background: #52a3cc;
+}
+
 a.disabled {
-    color: #aaaaaa;
+    background: #aaaaaa;
+    color: black;
     pointer-events: none;
     cursor: default;
     text-decoration: none;
 }
+
