@@ -3,6 +3,7 @@
     <body>
         <div id="manage">
             <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/manage/flights">flights</a>
             <ul id="users"></ul>
         </div>
     </body>
@@ -28,11 +29,18 @@
             users.forEach(user => {
                 const li = document.createElement("li");
                 li.className = "user";
-                for (const key in user) {
-                    const span = document.createElement("span");
-                    span.textContent = user[key];
-                    li.appendChild(span);
+
+                const username = document.createElement("span");
+                username.textContent = user.username;
+
+                const type = document.createElement("span");
+                if (user.type == "1") {
+                    type.textContent = "Admin";
                 }
+
+                li.appendChild(username);
+                li.appendChild(type);
+
                 const changeType = document.createElement("button");
                 changeType.addEventListener("click", e => {
                     const newType = user.type == "1" ? "0" : "1";
