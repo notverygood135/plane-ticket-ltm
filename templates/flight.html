@@ -1,77 +1,203 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/flight.css">
-    <body>
-        <h1>hello <span id="username"></span></h1>
+<link rel="stylesheet" href="../static/flight.css">
 
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/login" class="auth">login</a>
-        <a href="http://localhost:8001/register" class="auth">register</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+<body>
+    <h1>hello <span id="username"></span></h1>
 
-        <div id="flights-info">
-            <div id="flight-info">
-                <div class="flight-info-column">Flight: <span id="flight"></span></div>
-                <div class="flight-info-column">From: <span id="from"></span></div>
-                <div class="flight-info-column">To: <span id="to"></span></div>
-                <div class="flight-info-column">Airline: <span id="airline"></span></div>
-                <div class="flight-info-column">Date: <span id="date"></span></div>
-                <div class="flight-info-column">Time: <span id="time"></span></div>
-            </div>
-            <ul id="tickets"></ul>
+    <a href="http://localhost:8001">home</a>
+    <a href="http://localhost:8001/login" class="auth">login</a>
+    <a href="http://localhost:8001/register" class="auth">register</a>
+    <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+    <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+    <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+
+    <div id="flights-info">
+        <div id="flight-info">
+            <div class="flight-info-column">Flight: <span id="flight"></span></div>
+            <div class="flight-info-column">From: <span id="from"></span></div>
+            <div class="flight-info-column">To: <span id="to"></span></div>
+            <div class="flight-info-column">Airline: <span id="airline"></span></div>
+            <div class="flight-info-column">Date: <span id="date"></span></div>
+            <div class="flight-info-column">Time: <span id="time"></span></div>
         </div>
-    </body>
+        <ul id="tickets"></ul>
+        
+    </div>
+    <div id="exchange"> Exchange </div>
+</body>
 
-    <script>
-        const url = window.location.pathname;
-        const id = url.split("/")[2];
+<script>
+   
+    const url = window.location.pathname;
+    const id = url.split("/")[2];
+    const old_id_string = localStorage.getItem('ticket_id_old');
+    const old_id = parseInt(old_id_string, 10);
+    let new_id_string='' ;
+    const exchange_div=document.querySelector('#exchange');
+    let tickets = [];
+    let filteredTickets = [];
+    // exchange_div.style.display='none';
+    exchange_div.className='disable';
+// 1. xu ly trang flight cua flow mua ve  
+    // hien thi elements tuy thuoc vao trang thai dang nhap
+    const username = localStorage.getItem("username");
+    const authElements = document.querySelectorAll(".auth");
+    const navElements = document.querySelectorAll(".nav");
+    if (username != null) {
+        document.getElementById("username").innerHTML = username;
+        authElements.forEach(item => item.style.display = "none");
+        navElements.forEach(item => item.style.display = "block");
+    }
+    else {
+        authElements.forEach(item => item.style.display = "block");
+        navElements.forEach(item => item.style.display = "none");
+    }
 
-        let tickets = [];
-        let filteredTickets = [];
-
-        // hien thi elements tuy thuoc vao trang thai dang nhap
+    // xoa data nguoi dung duoc luu trong ls
+    function logout() {
+        localStorage.clear();
+    }
+    //function ownOldToNew
+    function ownOldToNew(){
         const username = localStorage.getItem("username");
-        const authElements = document.querySelectorAll(".auth");
-        const navElements = document.querySelectorAll(".nav");
-        if (username != null) {
-            document.getElementById("username").innerHTML = username;
-            authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "block");
+        if (username == null) {
+            window.location = "http://localhost:8001/login";
+            return;
         }
-        else {
-            authElements.forEach(item => item.style.display = "block");
-            navElements.forEach(item => item.style.display = "none");
-        }
+        let number ;
+        let expirationDate ;
+        let securityCode ;
+        let fullName ;
 
-        // xoa data nguoi dung duoc luu trong ls
-        function logout() {
-            localStorage.clear();
-        }
-
-        function renderTickets() {
-            const ul = document.getElementById("tickets");
-            ul.innerHTML = ""; // xoa cac element da co de them tu dau
-
-            filteredTickets.forEach(ticket => {
-                const a = document.createElement("a");
-                a.className = "ticket";
-                const ticketInfo = document.getElementById("ticket-info");
-                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
-                a.textContent = ticket.seat;
-                if (ticket.owned == "1") {
-                    a.className = "disabled";
-                }
-                ul.appendChild(a);
-            });
-        }
-
-        fetch(`/flights/${id}`, {
+        fetch(`/own/${id}`, {
             method: "GET",
         })
         .then(response => {
             return(response.text());
+        })
+        .then(data => {
+            const ticket = JSON.parse(data)
+            console.log(ticket);
+        });
+            
+            // console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
+            
+            // const requestOptionsOwn = {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "text/html"
+            //     },
+            //     body: 
+            //         `username=${username}&ticket_id=${new_id_string}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
+            // }
+
+            // const content = `Boarding pass confirmed\\nDear ${username},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
+
+            // const date = new Date();
+            // const dateString = date.toISOString().split('T')[0];
+            // const timeString = date.toLocaleTimeString('en-US', {
+            //     hour12: false,
+            //     hour: "numeric",
+            //     minute: "numeric"
+            // });
+
+            // const requestOptionsNotification = {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "text/html"
+            //     },
+            //     body: 
+            //         `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+            // }
+            
+            // fetch("/own", requestOptionsOwn)
+            // .then(response => {
+            //     return(response.status);
+            // })
+            // .then(status => {
+            //     if (status == 200) {
+            //         fetch("/notification", requestOptionsNotification)
+            //         .then(response => {
+            //             return(response.status);
+            //         })
+            //         .then(status => {
+            //             if (status == 200) {
+            //                 alert("You have a new notification!");
+            //                 window.location.replace("http://localhost:8001/notifications");
+            //             }
+            //         })
+            //     }
+            //     else {
+            //         alert("Error");
+            //     }
+            // })
+    }
+    function deleteOld(){
+
+    }
+    //function exchange
+    function exhange() {
+        ownOldToNew();
+        deleteOld();
+        
+        }
+    // function xu ly khi nguoi dung chon 
+    function pick(new_id_string){
+        let ticket;
+        
+        exchange_div.onclick = function(){
+            var result = confirm(`${ticket} Ban da chac chan`);
+            if(result){
+                exhange();
+            }
+            else{
+                window.location.reload();
+            }
+        }
+    }
+    function renderTickets() {
+        const ul = document.getElementById("tickets");
+        ul.innerHTML = ""; // xoa cac element da co de them tu dau
+
+        filteredTickets.forEach(ticket => {
+            const a = document.createElement("a");
+            a.className = "ticket";
+            const ticketInfo = document.getElementById("ticket-info");
+            if (old_id) { // neu co old_id 
+                a.onclick = function () {
+                    new_id_string='';
+                    new_id_string=new_id_string+ticket.ticket_id;
+                    console.log(ticket.ticket_id);
+                    fetch(`/ticket/${new_id_string}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+             var tickethaha = JSON.parse(data)
+             console.log(tickethaha);
+        })
+                    pick(new_id_string);
+                    
+                }
+            } else {
+                a.setAttribute("href", `http://localhost:8001/buy/${ticket.ticket_id}`);
+            }
+            a.textContent = ticket.seat;
+            if (ticket.owned == "1") {
+                a.className = "disabled";
+            }
+            ul.appendChild(a);
+        });
+    }
+
+    fetch(`/flights/${id}`, {
+        method: "GET",
+    })
+        .then(response => {
+            return (response.text());
         })
         .then(data => {
             const flightData = JSON.parse(data)[0];
@@ -83,11 +209,11 @@
             document.getElementById("time").innerText = flightData.time;
         })
 
-        fetch(`/tickets/${id}`, {
-            method: "GET",
-        })
+    fetch(`/tickets/${id}`, {
+        method: "GET",
+    })
         .then(response => {
-            return(response.text());
+            return (response.text());
         })
         .then(data => {
             console.log(data);
@@ -96,16 +222,26 @@
             renderTickets();
         })
 
-        fetch(`/unread/${username}`, {
-            method: "GET",
-        })
+    fetch(`/unread/${username}`, {
+        method: "GET",
+    })
         .then(response => {
-            return(response.text());
+            return (response.text());
         })
         .then(data => {
             console.log(data);
             const unread = document.getElementById("unread");
             unread.innerText = JSON.parse(data)[0].count;
         })
-    </script>
+//2. xu ly trang flight cua doi ve 
+        
+        if(old_id){
+            exchange_div.style.display='block';
+
+        }
+
+    
+
+</script>
+
 </html>

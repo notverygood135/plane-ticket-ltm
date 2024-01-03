@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../static/index.css">
+    <body>
+        <h1><span id="username"></span>'s tickets</h1>
+
+
+        <a href="http://localhost:8001">home</a>
+        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+
+        <div>money: <span id="money"></span></div>
+        <div class="main">
+        <div id="ticket-info"></div>
+        <div id="flights-info">
+            <div id="flights-search">
+                <input type="text" name="from" id="from" placeholder="From">
+                <input type="text" name="to" id="to" placeholder="To">
+                <input type="airline" name="airline" id="airline" placeholder="Airline">
+                <input type="datetime-local" name="datetime" id="datetime">
+                <button type="button" onclick="filter()">Filter</button>
+                <select name="sort" id="sort" onchange="sortFlights()">
+                    <option value="flight">Flight</option>
+                    <option value="time">Time</option>
+                    <option value="airline">Airline</option>
+                </select>
+            </div>
+            <div id="flights-column">
+                <span>Flight</span>
+                <span>From</span>
+                <span>To</span>
+                <span>Date</span>
+                <span>Time</span>
+                <span>Airline</span>
+            </div>
+            <ul id="flights"></ul>
+        </div>
+  
+        </div>
+        
+    </body>
+    <script>
+        // head 
+        const username = localStorage.getItem("username");
+
+        document.getElementById("username").innerHTML = username;
+        fetch(`/user/${username}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
+        })
+        function logout() {
+            localStorage.clear();
+        }
+        
+        const url = window.location.pathname;
+        const id = url.split("/")[2];
+        localStorage.setItem('ticket_id_old',id);
+        function renderTicket(ticket) {
+            const ticketInfo = document.getElementById("ticket-info");
+            for (let key in ticket) {
+                const div = document.createElement("div");
+                div.className = "ticket-info-column";
+                div.innerHTML = ticket[key];
+                ticketInfo.appendChild(div);
+            }
+        }
+        
+        fetch(`/ticket/${id}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const ticket = JSON.parse(data)[0];
+            renderTicket(ticket);
+        })
+        
+        // 
+        function logout() {
+            localStorage.clear();
+        }
+
+        function filter() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+            let airline = document.getElementById("airline").value;
+            let datetime= document.getElementById("datetime").value;
+            filteredFlights = flights;
+            console.log(`from: ${from}, to: ${to}, datetime: ${datetime}`);
+            if (from != "") {
+                filteredFlights = filteredFlights.filter(flight => 
+                    flight.from.includes(from));
+            }
+            if (to != "") {
+                filteredFlights = filteredFlights.filter(flight => 
+                    flight.to.includes(to));
+            }
+            if (airline != "") {
+                filteredFlights = filteredFlights.filter(flight => 
+                    flight.airline.includes(airline));
+            }
+            if (datetime != "") {
+                filteredFlights = filteredFlights.filter(flight => 
+                    Date.parse(datetime)== Date.parse(`${flight.date}T${flight.time}:00`));
+            }
+            renderFlights();
+        }
+
+        function renderFlights() {
+            const ul = document.getElementById("flights");
+            ul.innerHTML = ""; // xoa cac element da co de them tu dau
+            filteredFlights.forEach(ticket => {
+                const li = document.createElement("li");
+                li.className = "ticket";
+                for (const key in ticket) {
+                    const span = document.createElement("span");
+                    span.textContent = ticket[key];
+                    li.appendChild(span);
+                }
+                const a = document.createElement("a");
+                a.setAttribute("href", `http://localhost:8001/flight/${ticket.flight_id}`);
+                a.innerHTML = "More";
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+        }
+
+        function sortFlights() {
+            const select = document.getElementById("sort").value;
+            console.log(select);
+            switch (select) {
+                case "flight":
+                    filteredFlights.sort((a, b) => {
+                        return a.flight_id > b.flight_id;
+                    })
+                    break;
+                case "time":
+                    console.log("sorting by time");
+                    filteredFlights.sort((a, b) => {
+                        return Date.parse(`${a.date}T${a.time}:00`) > Date.parse(`${b.date}T${b.time}:00`)
+                    })
+                    break;
+                case "airline":
+                    filteredFlights.sort((a, b) => {
+                        return a.airline > b.airline;
+                    })
+                    break;
+                default:
+                    break;
+            }
+            renderFlights();
+        }
+
+        fetch("/flights", {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            flights = JSON.parse(data);
+            filteredFlights = flights;
+            renderFlights();
+        })
+
+        fetch(`/unread/${username}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
+        })
+    
+    </script>
+    
+</html>

@@ -15,7 +15,9 @@ unordered_map<string, string> template_routes = {
     {"/inventory", "inventory"},
     {"/notifications", "notifications"},
     {"/manage/flights", "index_admin"},
-    {"/manage/users", "users_admin"}
+    {"/manage/users", "users_admin"},
+    
+   
 };
 
 vector<string> get(string route) {
@@ -57,6 +59,9 @@ vector<string> get(string route) {
     }
     else if (parsed_route == "manage") {
         response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/flight_admin.html"};
+    }
+    else if (parsed_route =="exchange") {
+        response = {"HTTP/1.1 200 OK\r\n\r\n", "templates/exchange.html"};
     }
     else if (parsed_route == "ticket") {
         string ticket_id = route_parse[route_parse.size() - 1];
