@@ -40,8 +40,7 @@ static int getCallback(void *data, int argc, char **argv, char **column) {
     return 0;
 }
 
-vector<string> get_ownership(string _ticket_id) {
-    string ticket_id = split(_ticket_id, "=")[1];
+vector<string> get_ownership(string ticket_id) {
     own_row_count = 0;
     own_rows = "[";
 
