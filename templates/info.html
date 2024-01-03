@@ -45,7 +45,7 @@
             return(response.text());
         })
         .then(data => {
-            const ticket = JSON.parse(data)[0];
+            ticket = JSON.parse(data)[0];
             renderTicket(ticket);
             textGen(ticket);
         })
@@ -56,7 +56,7 @@
                 headers: {
                     "Content-Type": "text/html"
                 },
-                body: `ticket_id=${id}`
+                body: `ticket_id=${id}&money=${-ticket.price / 2}`
             })
             .then(response => {
                 return(response.status);

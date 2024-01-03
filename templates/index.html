@@ -2,14 +2,16 @@
 <html>
     <link rel="stylesheet" href="../static/index.css">
     <body>
-        <h1>hello <span id="username"></span></h1>
+        <div id="navbar">
+            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/login" class="auth">login</a>
+            <a href="http://localhost:8001/register" class="auth">register</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        </div>
 
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/login" class="auth">login</a>
-        <a href="http://localhost:8001/register" class="auth">register</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        <h1>hello <span id="username"></span></h1>
 
         <div id="flights-info">
             <div id="flights-search">
@@ -49,6 +51,16 @@
             document.getElementById("username").innerHTML = username;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "block");
+            fetch(`/unread/${username}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                const unread = document.getElementById("unread");
+                unread.innerText = JSON.parse(data)[0].count;
+            })
         }
         else {
             authElements.forEach(item => item.style.display = "block");
@@ -141,17 +153,6 @@
             flights = JSON.parse(data);
             filteredFlights = flights;
             renderFlights();
-        })
-
-        fetch(`/unread/${username}`, {
-            method: "GET",
-        })
-        .then(response => {
-            return(response.text());
-        })
-        .then(data => {
-            const unread = document.getElementById("unread");
-            unread.innerText = JSON.parse(data)[0].count;
         })
     </script>
 </html>
