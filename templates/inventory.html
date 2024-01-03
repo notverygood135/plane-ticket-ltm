@@ -35,6 +35,7 @@
         </div>
     </body>
     <script>
+        localStorage.removeItem('ticket_id_old');
         const username = localStorage.getItem("username");
         if (username == null || username == "") {
             window.location = "http://localhost:8001/login"
