@@ -1,10 +1,36 @@
 h1 {
     color: red;
+    font-size: 40x;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+.auth, .nav, .home-link {
+    font-size: 20px;
+    margin-top: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+body{
+    font-family: sans-serif;
+    background-color: rgb(179, 235, 235);
+    font-size: 18px;
+}
+
+.table-header {
+    font-weight: bold;
+}
+
+.search{
+    font-size: 18px;
 }
 
 #flights {
     padding: 0;
     width: 100%;
+    border-collapse: collapse;
 }
 
 li, #flights-column {
@@ -14,6 +40,12 @@ li, #flights-column {
 
 #flights-column span, li span {
     margin: 0 10px;
-    display: flex;
+    display: grid;
     justify-content: center;
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+
+.bottom-line{
+    margin-top: 25px;
 }

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <h1>register</h1>
-        <input type="text" name="username" id="username" placeholder="Username">
-        <input type="password" name="password" id="password" placeholder="Password">
-        <input type="password" name="confirm" id="confirm" placeholder="Confirm password">
-        <button type="button" onclick="submit()">Submit</button>
+        <link href="../static/register.css" rel="stylesheet"/>
+        <h1>REGISTER</h1>
+        <input class="username" type="text" name="username" id="username" placeholder="Username" size="50"><br>
+        <input class="password" type="password" name="password" id="password" placeholder="Password" size="50"><br>
+        <input class="confirm" type="password" name="confirm" id="confirm" placeholder="Confirm password" size="50"><br>
+        <button class="button" type="button" onclick="submit()">Submit</button>
         <script>
             function submit() {
                 let username = document.getElementById("username").value;

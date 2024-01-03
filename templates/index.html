@@ -2,35 +2,35 @@
 <html>
     <link rel="stylesheet" href="../static/index.css">
     <body>
-        <h1>hello <span id="username"></span></h1>
+        <h1>HELLO <span id="username"></span></h1>
 
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/login" class="auth">login</a>
-        <a href="http://localhost:8001/register" class="auth">register</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
-
+        <a href="http://localhost:8001" class="home-link" >home</a>
+        <a href="http://localhost:8001/login" class="auth" >login</a>
+        <a href="http://localhost:8001/register" class="auth" >register</a>
+        <a href="http://localhost:8001/inventory" class="nav" >inventory</a>
+        <a href="http://localhost:8001/notifications" class="nav" >notifications</a>
+        <a href="http://localhost:8001" onclick="logout()" class="nav" >logout</a>
+    <hr>
         <div id="flights-info">
             <div id="flights-search">
-                <input type="text" name="from" id="from" placeholder="From">
-                <input type="text" name="to" id="to" placeholder="To">
-                <input type="airline" name="airline" id="airline" placeholder="Airline">
-                <input type="datetime-local" name="datetime" id="datetime">
-                <button type="button" onclick="filter()">Filter</button>
-                <select name="sort" id="sort" onchange="sortFlights()">
+                <input type="text" class="search" name="from" id="from" placeholder="From">
+                <input type="text" class="search" name="to" id="to" placeholder="To">
+                <input type="airline" class="search" name="airline" id="airline" placeholder="Airline">
+                <input type="datetime-local" class="search" name="datetime" id="datetime">
+                <button type="button" class="search" onclick="filter()">Filter</button>
+                <select class="search" name="sort" id="sort" onchange="sortFlights()">
                     <option value="flight">Flight</option>
                     <option value="time">Time</option>
                     <option value="airline">Airline</option>
                 </select>
             </div>
             <div id="flights-column">
-                <span>Flight</span>
-                <span>From</span>
-                <span>To</span>
-                <span>Date</span>
-                <span>Time</span>
-                <span>Airline</span>
+                <span class="table-header">Flight</span>
+                <span class="table-header">From</span>
+                <span class="table-header">To</span>
+                <span class="table-header">Date</span>
+                <span class="table-header">Time</span>
+                <span class="table-header">Airline</span>
             </div>
             <ul id="flights"></ul>
         </div>
@@ -143,4 +143,5 @@
             renderFlights();
         })
     </script>
+    <hr class="bottom-line">
 </html>

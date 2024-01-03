@@ -4,29 +4,29 @@
     <body>
         <h1><span id="username"></span>'s tickets</h1>
 
-        <a href="http://localhost:8001">home</a>
-        <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-        <a href="http://localhost:8001/notifications" class="nav">notifications</a>
-        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a>
+        <a href="http://localhost:8001" class="home-link">home</a><br>
+        <a href="http://localhost:8001/inventory" class="nav">inventory</a><br>
+        <a href="http://localhost:8001/notifications" class="nav">notifications</a><br>
+        <a href="http://localhost:8001" onclick="logout()" class="nav">logout</a><br>
 
         <div id="tickets-info">
             <div id="tickets-search">
-                <input type="text" name="from" id="from" placeholder="From">
-                <input type="text" name="to" id="to" placeholder="To">
-                <input type="airline" name="airline" id="airline" placeholder="Airline">
-                <input type="datetime-local" name="datetime" id="datetime">
-                <button type="button" onclick="filter()">Filter</button>
+                <input class="search" type="text" name="from" id="from" placeholder="From">
+                <input class="search"  type="text" name="to" id="to" placeholder="To">
+                <input class="search"  type="airline" name="airline" id="airline" placeholder="Airline">
+                <input class="search"  type="datetime-local" name="datetime" id="datetime">
+                <button class="search"  type="button" onclick="filter()">Filter</button>
             </div>
             <div id="tickets-column">
-                <span>Flight</span>
-                <span>From</span>
-                <span>To</span>
-                <span>Date</span>
-                <span>Time</span>
-                <span>Airline</span>
-                <span>Ticket</span>
-                <span>Seat</span>
-                <span>Price</span>
+                <span class="table-header">Flight</span>
+                <span class="table-header">From</span>
+                <span class="table-header">To</span>
+                <span class="table-header">Date</span>
+                <span class="table-header">Time</span>
+                <span class="table-header">Airline</span>
+                <span class="table-header">Ticket</span>
+                <span class="table-header">Seat</span>
+                <span class="table-header">Price</span>
             </div>
             <ul id="tickets"></ul>
         </div>
