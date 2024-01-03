@@ -70,15 +70,15 @@
         let securityCode ;
         let fullName ;
 
-        fetch(`/own/${id}`, {
+        fetch(`/own/${old_id_string}`, {
             method: "GET",
         })
         .then(response => {
             return(response.text());
         })
         .then(data => {
-            const ticket = JSON.parse(data)
-            console.log(ticket);
+            
+            console.log(data);
         });
             
             // console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
@@ -144,16 +144,28 @@
         }
     // function xu ly khi nguoi dung chon 
     function pick(new_id_string){
-        let ticket;
+        
         
         exchange_div.onclick = function(){
-            var result = confirm(`${ticket} Ban da chac chan`);
-            if(result){
+         
+        fetch(`/ticket/${new_id_string}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            console.log(data);
+             var result = confirm(`${data} Ban da chac chan?`);
+             if(result){
                 exhange();
             }
             else{
                 window.location.reload();
             }
+        })
+            
+           
         }
     }
     function renderTickets() {
@@ -169,16 +181,7 @@
                     new_id_string='';
                     new_id_string=new_id_string+ticket.ticket_id;
                     console.log(ticket.ticket_id);
-                    fetch(`/ticket/${new_id_string}`, {
-            method: "GET",
-        })
-        .then(response => {
-            return(response.text());
-        })
-        .then(data => {
-             var tickethaha = JSON.parse(data)
-             console.log(tickethaha);
-        })
+                    
                     pick(new_id_string);
                     
                 }
