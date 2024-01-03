@@ -175,7 +175,7 @@ vector<string> delete_user(string username) {
     return response;
 }
 
-vector<string> update_user(string _username, string _type) {
+vector<string> update_type(string _username, string _type) {
     string username = split(_username, "=")[1];
     string type = split(_type, "=")[1];
     sqlite3 *db;
@@ -196,6 +196,38 @@ vector<string> update_user(string _username, string _type) {
     sql.append(" WHERE username = '");
     sql.append(username);
     sql.append("';");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back("");
+    return response;
+}
+
+vector<string> update_money(string _money) {
+    string money = split(_money, "=")[1];
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "UPDATE users SET money = money - ";
+    sql.append(money);
+    sql.append(";");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
     if (rc != SQLITE_OK) {

@@ -19,6 +19,7 @@
         const generate= document.getElementById('generate');
         const qrcodebox = document.querySelector('.body_qr');
         const down= document.querySelector('#down');
+        let ticket = {};
         function renderTicket(ticket) {
             const ticketInfo = document.getElementById("ticket-info");
             for (let key in ticket) {
@@ -26,7 +27,6 @@
                 div.className = "ticket-info-column";
                 div.innerHTML = ticket[key];
                 ticketInfo.appendChild(div);
-                console.log(typeof ticket[key]);
             }
         }
         
@@ -37,7 +37,7 @@
             return(response.text());
         })
         .then(data => {
-            const ticket = JSON.parse(data)[0];
+            ticket = JSON.parse(data)[0];
             renderTicket(ticket);
             textGen(ticket);
         })
@@ -48,7 +48,7 @@
                 headers: {
                     "Content-Type": "text/html"
                 },
-                body: `ticket_id=${id}`
+                body: `ticket_id=${id}&money=${-ticket.price / 2}`
             })
             .then(response => {
                 return(response.status);

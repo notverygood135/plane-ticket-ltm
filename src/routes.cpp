@@ -85,7 +85,10 @@ vector<string> get(string route) {
     else if (parsed_route == "users") {
         response = get_users();
     }
-
+    else if (parsed_route == "own") {
+        string ticket_id = route_parse[route_parse.size() - 1];
+        response = get_ownership(ticket_id);
+    }
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
@@ -119,7 +122,7 @@ vector<string> put(string route, string payload) {
         return update_notifications(route_parse[route_parse.size() - 1]);
     }
     else if (parsed_route == "users") {
-        return update_user(body[0], body[1]);
+        return update_type(body[0], body[1]);
     }
     else if (parsed_route == "flights") {
         return update_flight(body[0], body[1], body[2]);
@@ -136,6 +139,7 @@ vector<string> _delete(string route, string payload) {
     vector<string> body = split(payload, "&");
 
     if (parsed_route == "own") {
+        update_money(body[1]);
         return delete_ownership(body[0]);
     }
     else if (parsed_route == "users") {
