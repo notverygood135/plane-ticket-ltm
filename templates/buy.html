@@ -6,21 +6,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="navbar">
-            <div class="logo"><img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000"  width="100vw" height="100vh"></img></div>
-            <div id="navbar_list">
-            <a href="http://localhost:8001">home</a>
-            <a href="http://localhost:8001/login" class="auth">login</a>
-            <a href="http://localhost:8001/register" class="auth">register</a>
-            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-            
+            <div class="logo">
+                <a href="http://localhost:8001">
+                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                </a>
             </div>
+            <div id="navbar_list">
+                <a href="http://localhost:8001">home</a>
+                <a href="http://localhost:8001/login" class="auth">login</a>
+                <a href="http://localhost:8001/register" class="auth">register</a>
+                <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+                <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            </div>
+            
             <div class="account">
-                <div class="trigger" ><h1>hello <span id="username"></span></h1>
-                    <div>money: <span id="money"></span></div>
+                <div class="trigger" ><h1>Hello <span id="username"></span></h1>
+                    <div>Balance: $<span id="money"></span></div>
                 
                 </div>
-                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">Logout</a></div>
 
             </div> 
         </div>
@@ -59,7 +63,7 @@
         if (username != "" && username != null) {
             document.getElementById("username").innerHTML = username;
             authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "block");
+            navElements.forEach(item => item.style.display = "flex");
             fetch(`/unread/${username}`, {
                 method: "GET",
             })

@@ -5,13 +5,11 @@
     font-size: 1rem;
 }
 
+/* navbar */
 #navbar{
     display: grid;
     width: 100vw;
-    
     grid-template-columns: 10% 70% 20%;
-    
-
 }
 
 #navbar .logo{
@@ -43,14 +41,20 @@
 
 a {
     text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .account {
     display: flex;
     height: 10vh;
+    padding: 0 1rem;
     box-shadow: #aaaaaa 0 2px 2px;
     flex-direction: column;
-    align-items: center; /* Đặt menu ở đầu trục chính (chiều dọc) */
+    justify-content: center; /* Đặt menu ở đầu trục chính (chiều dọc) */
 }
 
 .menu {
@@ -83,6 +87,18 @@ a {
 .menu:hover {
     display: block;
 }
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: #aaaaaa 0 2px 2px;
+}
+
+img {
+    max-height: 10vh;
+}
+/* navbar */
 
 #flights-info {
     margin: 1rem;
