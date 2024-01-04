@@ -95,7 +95,7 @@ a {
     box-shadow: #aaaaaa 0 2px 2px;
 }
 
-img {
+.logo img {
     max-height: 10vh;
 }
 /* navbar */
@@ -107,6 +107,10 @@ img {
 a {
     text-decoration: none;
     color: white;
+}
+
+#download {
+    color: black !important;
 }
 
 #button-container {
@@ -135,4 +139,14 @@ button:hover {
 li {
     padding: 1rem;
     border-bottom: #aaaaaa solid 1px;
+}
+
+@media print {
+    body {
+        visibility: hidden;
+    }
+
+    .print {
+        visibility: visible;
+    }
 }

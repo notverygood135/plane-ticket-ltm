@@ -29,7 +29,7 @@
             </div> 
         </div>
 
-        <div id="ticket-info">
+        <div id="ticket-info" class="print">
             <div>Flight: <span id="flight"></span></div>
             <div>From: <span id="from"></span></div>
             <div>To: <span id="to"></span></div>
@@ -188,8 +188,8 @@
             qrcodebox.innerHTML="";
             new QRCode(qrcodebox,{
                 text:qrInfo,
-                height:100,
-                width:100,
+                height:200,
+                width:200,
                 colorLight:"#fff",
                 colorDark:"#000"
             });
