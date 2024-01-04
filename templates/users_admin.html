@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
+    <link rel="stylesheet" href="../static/users.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="manage">
-            <a href="http://localhost:8001">home</a>
-            <a href="http://localhost:8001/manage/flights">flights</a>
+            <div id="navbar">
+                <a href="http://localhost:8001">home</a>
+                <a href="http://localhost:8001/manage/users">users</a>
+                <a href="http://localhost:8001/manage/users">flights</a>
+            </div>
             <ul id="users"></ul>
         </div>
     </body>
@@ -33,13 +40,11 @@
                 const username = document.createElement("span");
                 username.textContent = user.username;
 
-                const type = document.createElement("span");
                 if (user.type == "1") {
-                    type.textContent = "Admin";
+                    li.id = "admin";
                 }
 
                 li.appendChild(username);
-                li.appendChild(type);
 
                 const changeType = document.createElement("button");
                 changeType.addEventListener("click", e => {
@@ -85,8 +90,14 @@
                     });
                 });
                 deleteUser.innerText = "Delete";
-                li.appendChild(changeType);
-                li.appendChild(deleteUser);
+                deleteUser.id = "delete";
+
+                const buttonContainer = document.createElement("div");
+                buttonContainer.id = "button-container";
+
+                buttonContainer.appendChild(changeType);
+                buttonContainer.appendChild(deleteUser);
+                li.appendChild(buttonContainer);
                 ul.appendChild(li);
             });
         })
