@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/index_admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
+        <div id="navbar">
+            <div class="logo"><img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000"  width="100vw" height="100vh"></img></div>
+            <div id="navbar_list">
+            <a href="http://localhost:8001/manage/flights"class="ad">home</a>
+            <a href="http://localhost:8001/manage/users" class="ad">users</a>
+            <a href="http://localhost:8001/login" class="auth">login</a>
+            <a href="http://localhost:8001/register" class="auth">register</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            
+            </div>
+            <div class="account">
+                <div class="trigger" ><h1>hello <span id="username"></span></h1>
+                
+                </div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+
+            </div> 
+        </div>
+
         <div id="manage">
-            <a href="http://localhost:8001">home</a>
-            <a href="http://localhost:8001/manage/users">users</a>
+            
             <div id="flights-info">
                 <div id="flights-search">
                     <input type="text" name="from" id="from" placeholder="From">
@@ -39,11 +57,46 @@
         let filteredFlights = [];
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
-        const username = localStorage.getItem("username");
-
+         //navbar
+         const username = localStorage.getItem("username");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (username != "" && username != null) {
+            document.getElementById("username").innerHTML = username;
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "block");
+            fetch(`/unread/${username}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                
+                const unread = document.getElementById("unread");
+                unread.innerText = user.count;
+                const money = document.getElementById("money");
+            })
+            fetch(`/user/${username}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
+        })
+        }
+        function logout() {
+            localStorage.clear();
+        }
+        //
         if (username != "admin") {
             const manage = document.getElementById("manage");
             manage.innerText = "";
+            
         }
 
         function filter() {

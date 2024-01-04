@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    
+}
+
+
+#navbar{
+    display: grid;
+    width: 100vw;
+    
+    grid-template-columns: 10% 70% 20%;
+    
+
+}
+
+#navbar .logo{
+    display: flex;
+    align-items: center;
+}
+
+#navbar_list{
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    
+    justify-content: space-around;
+    box-shadow: #aaaaaa 0 2px 2px;
+
+}
+#navbar_list a {
+    
+    align-items: center;
+    color: black;
+    text-transform: capitalize;
+}
+
+#navbar_list a:hover {
+    
+    height: 10vh;
+    background: #eeeeee;
+}
+
+a {
+    text-decoration: none;
+}
+
+.account {
+    display: flex;
+    height: 10vh;
+    box-shadow: #aaaaaa 0 2px 2px;
+    flex-direction: column;
+    align-items: center; /* Đặt menu ở đầu trục chính (chiều dọc) */
+}
+
+.menu {
+    display: none;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    width: auto;
+    width: 20vw;
+}
+
+.menu a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #333;
+    
+}
+
+.menu a:hover {
+    background-color: #ddd;
+}
+
+.trigger {
+    display: flex;
+    gap: 1vw;
+    cursor: pointer;
+}
+.trigger:hover + .menu,
+.menu:hover {
+    display: block;
+}
+
+#flights-info {
+    margin: 1rem;
+}
+
+ul {
+    border: #aaaaaa solid 1px;
+    border-bottom: none;
+}
+
+#flights-column {
+    height: 3rem;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    border: #aaaaaa solid 1px;
+}
+
+li {
+    height: 3rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: #aaaaaa solid 1px;
+}
+
+li a {
+    height: 100%;
+    background: #3399cc;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+li a:hover {
+    background: #52a3cc;
+}
+
+#flights {
+    padding: 0;
+    width: 100%;
+}
+
+li, #flights-column {
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 2fr 1.5fr 3fr 1fr;
+}
+
+#flights-column span, li span {
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+}

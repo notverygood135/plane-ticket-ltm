@@ -2,7 +2,7 @@
 <html>
     <body>
         <div id="manage">
-            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/mangage/flights">home</a>
             <a href="http://localhost:8001/manage/flights">flights</a>
             <ul id="users"></ul>
         </div>
@@ -14,6 +14,7 @@
         if (username != "admin") {
             const manage = document.getElementById("manage");
             manage.innerText = "";
+            window.location.replace('http://localhost:8001')
         }
 
         fetch("/users", {

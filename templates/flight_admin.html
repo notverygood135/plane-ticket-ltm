@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html>
+    <link rel="stylesheet" href="../static/flightAdmin.css">
     <body>
+        <div id="navbar">
+            <div class="logo"><img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000"  width="100vw" height="100vh"></img></div>
+            <div id="navbar_list">
+            <a href="http://localhost:8001/manage/flights"class="ad">home</a>
+            <a href="http://localhost:8001/manage/users" class="ad">users</a>
+            <a href="http://localhost:8001/login" class="auth">login</a>
+            <a href="http://localhost:8001/register" class="auth">register</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            
+            </div>
+            <div class="account">
+                <div class="trigger" ><h1>hello <span id="username"></span></h1>
+                    <h2>hahah</h2>
+                </div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+
+            </div> 
+        </div>
+        
         <div>Passengers:</div>
         <ul id="passengers"></ul>
         <div id="flight-info">
@@ -32,6 +52,41 @@
         </div>
     </body>
     <script>
+         //navbar
+         const username = localStorage.getItem("username");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (username != "" && username != null) {
+            document.getElementById("username").innerHTML = username;
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "block");
+            fetch(`/unread/${username}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                
+                const unread = document.getElementById("unread");
+                unread.innerText = user.count;
+                const money = document.getElementById("money");
+            })
+            fetch(`/user/${username}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+        })
+        }
+        function logout() {
+            localStorage.clear();
+        }
+        //
+
         const url = window.location.pathname;
         const id = url.split("/")[3];
         const passengers = [];
