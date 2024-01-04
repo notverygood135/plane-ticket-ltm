@@ -48,6 +48,7 @@
                 <input id="time" type="time"></input>
             </div>
             <button type="button" onclick="submit()">Submit</button>
+            <button type="button" onclick="cancel()">Cancel Flight</button>
         </div>
     </body>
     <script>
@@ -108,19 +109,16 @@
             })
 
             passengers.forEach(passenger => {
-                notifyPassenger(passenger)
+                notifyPassenger(passenger, "change")
             });
         }
 
-        function notifyPassenger(passenger) {
+        function notifyPassenger(passenger, action) {
             const username = passenger;
             const from = document.getElementById("from").innerText;
             const to = document.getElementById("to").innerText;
             const newDate = document.getElementById("date").value;
             const newTime = document.getElementById("time").value;
-
-
-            const content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been rescheduled to another time:\\n${newTime}, ${newDate}\\nWe apologise for any inconvenience this may cause you\\nSafe travels!`;
 
             const date = new Date();
             const dateString = date.toISOString().split('T')[0];
@@ -129,6 +127,14 @@
                 hour: "numeric",
                 minute: "numeric"
             });
+
+            let content = ""
+            if (action == "change") {
+                content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been rescheduled to another time:\\n${newTime}, ${newDate}\\nWe apologise for any inconvenience this may cause you\\nSafe travels!`;
+            }
+            else if (action == "cancel") {
+                content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been cancelled.\\nWe apologise for any inconvenience this may cause you\\n`;
+            }
 
             const requestOptionsNotification = {
                 method: "POST",
@@ -141,6 +147,21 @@
 
             fetch("/notification", requestOptionsNotification);
             console.log(content);
+        }
+
+        function cancel() {
+            fetch("/flight", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: `flight_id=${id}`
+            })
+
+            
+            passengers.forEach(passenger => {
+                notifyPassenger(passenger, "cancel");
+            });
         }
     </script>
 </html>

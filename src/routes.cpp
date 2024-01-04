@@ -155,6 +155,9 @@ vector<string> _delete(string route, string payload) {
         string username = route_parse[route_parse.size() - 1];
         return delete_notifications(username);
     }
+    else if (parsed_route == "flight") {
+        return delete_flight(body[0]);
+    }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
