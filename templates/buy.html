@@ -20,7 +20,7 @@
             </div>
             
             <div class="account">
-                <div class="trigger" ><h1>Hello <span id="username"></span></h1>
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
                     <div>Balance: $<span id="money"></span></div>
                 
                 </div>
@@ -57,26 +57,26 @@
     </body>
     <script>
         //navbar
-        const username = localStorage.getItem("username");
+        const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
-            fetch(`/unread/${username}`, {
+            fetch(`/unread/${email}`, {
                 method: "GET",
             })
             .then(response => {
                 return(response.text());
             })
             .then(data => {
-                
+                const user = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
                 unread.innerText = user.count;
                 const money = document.getElementById("money");
             })
-            fetch(`/user/${username}`, {
+            fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {
@@ -117,7 +117,7 @@
             renderTicket(ticket);
         })
 
-        fetch(`/unread/${username}`, {
+        fetch(`/unread/${email}`, {
             method: "GET",
         })
         .then(response => {
@@ -130,8 +130,8 @@
         })
 
         function submit() {
-            const username = localStorage.getItem("username");
-            if (username == null) {
+            const email = localStorage.getItem("email");
+            if (email == null) {
                 window.location = "http://localhost:8001/login";
                 return;
             }
@@ -139,6 +139,7 @@
             let expirationDate = document.getElementById("expiration-date").value;
             let securityCode = document.getElementById("security-code").value;
             let fullName = document.getElementById("full-name").value;
+            let bonus = 0; // diem thuong moi cua nguoi dung
             console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
             
             const requestOptionsOwn = {
@@ -147,10 +148,10 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
+                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus}`
             }
 
-            const content = `Boarding pass confirmed\\nDear ${username},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
+            const content = `Boarding pass confirmed\\nDear ${email},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
 
             const date = new Date();
             const dateString = date.toISOString().split('T')[0];
@@ -166,7 +167,7 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+                    `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
             }
             
             fetch("/own", requestOptionsOwn)

@@ -15,10 +15,10 @@
         </div>
     </body>
     <script>
-        const username = localStorage.getItem("username");
+        const email = localStorage.getItem("email");
         let users = [];
 
-        if (username != "admin") {
+        if (email != "admin") {
             const manage = document.getElementById("manage");
             manage.innerText = "";
         }
@@ -37,14 +37,14 @@
                 const li = document.createElement("li");
                 li.className = "user";
 
-                const username = document.createElement("span");
-                username.textContent = user.username;
+                const email = document.createElement("span");
+                email.textContent = user.email;
 
                 if (user.type == "1") {
                     li.id = "admin";
                 }
 
-                li.appendChild(username);
+                li.appendChild(email);
 
                 const changeType = document.createElement("button");
                 changeType.addEventListener("click", e => {
@@ -54,7 +54,7 @@
                         headers: {
                             "Content-Type": "text/html"
                         },
-                        body: `username=${user.username}&type=${newType}`
+                        body: `email=${user.email}&type=${newType}`
                     })
                     .then(response => {
                         return response.status;
@@ -73,7 +73,7 @@
 
                 const deleteUser = document.createElement("button");
                 deleteUser.addEventListener("click", e => {
-                    fetch(`/users/${user.username}`, {
+                    fetch(`/users/${user.email}`, {
                         method: "DELETE",
                     })
                     .then(response => {

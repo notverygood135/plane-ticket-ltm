@@ -23,7 +23,7 @@
             </div>
 
             <div class="account">
-                <div class="trigger" ><h1>Hello <span id="username"></span></h1>
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
                     <div>Balance: $<span id="money"></span></div>
                 
                 </div>
@@ -65,15 +65,15 @@
         let filteredFlights = [];
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
-        const username = localStorage.getItem("username");
+        const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
 
-            fetch(`/unread/${username}`, {
+            fetch(`/unread/${email}`, {
                 method: "GET",
             })
             .then(response => {
@@ -85,7 +85,7 @@
                 unread.innerText = user.count;
                 const money = document.getElementById("money");
             })
-            fetch(`/user/${username}`, {
+            fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {

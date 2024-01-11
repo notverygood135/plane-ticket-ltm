@@ -35,8 +35,8 @@ static int callback(void *data, int argc, char **argv, char **column) {
     return 0;
 }
 
-vector<string> create_user(string _username, string _password, string _confirm) {
-    string username = split(_username, "=")[1];
+vector<string> create_user(string _email, string _password, string _confirm) {
+    string email = split(_email, "=")[1];
     string password = split(_password, "=")[1];
     string confirm = split(_confirm, "=")[1];
     
@@ -54,10 +54,10 @@ vector<string> create_user(string _username, string _password, string _confirm) 
         return response;
     }
     sql = "INSERT INTO users VALUES ('";
-    sql.append(username);
+    sql.append(email);
     sql.append("', '");
     sql.append(password);
-    sql.append("', 10000.0, 0);");
+    sql.append("', 10000.0, 0, 0);");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
 
@@ -67,17 +67,17 @@ vector<string> create_user(string _username, string _password, string _confirm) 
         response.push_back("");
         return response;
     }
-    cout << "successfully registered user " << username << endl;
+    cout << "successfully registered user " << email << endl;
     sqlite3_close(db);
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");
     response.push_back("OK");
     return response;
 }
 
-vector<string> login(string _username, string _password) {
+vector<string> login(string _email, string _password) {
     row_count = 0;
     rows = "[";
-    string username = split(_username, "=")[1];
+    string email = split(_email, "=")[1];
     string password = split(_password, "=")[1];
 
     sqlite3 *db;
@@ -93,8 +93,8 @@ vector<string> login(string _username, string _password) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT * FROM users WHERE username = '";
-    sql.append(username);
+    sql = "SELECT * FROM users WHERE email = '";
+    sql.append(email);
     sql.append("' AND password = '");
     sql.append(password);
     sql.append("';");
@@ -106,13 +106,13 @@ vector<string> login(string _username, string _password) {
         return response;
     }
     if (!row_count) {
-        cout << "username or password is incorrect" << endl;
+        cout << "email or password is incorrect" << endl;
         sqlite3_close(db);
         response.push_back("HTTP/1.1 401 Unauthorized\r\n\r\n");
         response.push_back("");
         return response;
     }
-    cout << "successfully logged in user " << username << endl;
+    cout << "successfully logged in user " << email << endl;
     sqlite3_close(db);
     rows.append("]");
     response.push_back("HTTP/1.1 200 OK\r\n\r\n");

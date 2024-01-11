@@ -68,20 +68,20 @@ vector<string> get(string route) {
         response = get_ticket(ticket_id);
     }
     else if (parsed_route == "inventory") {
-        string username = route_parse[route_parse.size() - 1];
-        response = get_owned_tickets(username);
+        string email = route_parse[route_parse.size() - 1];
+        response = get_owned_tickets(email);
     }
     else if (parsed_route == "notification") {
-        string username = route_parse[route_parse.size() - 1];
-        response = get_notifications(username);
+        string email = route_parse[route_parse.size() - 1];
+        response = get_notifications(email);
     }
     else if (parsed_route == "unread") {
-        string username = route_parse[route_parse.size() - 1];
-        response = get_unread_notifications_count(username);
+        string email = route_parse[route_parse.size() - 1];
+        response = get_unread_notifications_count(email);
     }
     else if (parsed_route == "user") {
-        string username = route_parse[route_parse.size() - 1];
-        response = get_user(username);
+        string email = route_parse[route_parse.size() - 1];
+        response = get_user(email);
     }
     else if (parsed_route == "passengers") {
         string flight_id = route_parse[route_parse.size() - 1];
@@ -110,6 +110,7 @@ vector<string> post(string route, string payload) {
         return login(body[0], body[1]);
     }
     else if (route == "/own") {
+        update_bonus(body[0], body[6]);
         return create_ownership(body[0], body[1], body[2], body[3], body[4], body[5]);
     }
     else if (route == "/notification") {
@@ -144,16 +145,16 @@ vector<string> _delete(string route, string payload) {
     vector<string> body = split(payload, "&");
 
     if (parsed_route == "own") {
-        update_money(body[1]);
-        return delete_ownership(body[0]);
+        update_money(body[0], body[2]);
+        return delete_ownership(body[1]);
     }
     else if (parsed_route == "users") {
-        string username = route_parse[route_parse.size() - 1];
-        return delete_user(username);
+        string email = route_parse[route_parse.size() - 1];
+        return delete_user(email);
     }
     else if (parsed_route == "notification") {
-        string username = route_parse[route_parse.size() - 1];
-        return delete_notifications(username);
+        string email = route_parse[route_parse.size() - 1];
+        return delete_notifications(email);
     }
     else if (parsed_route == "flight") {
         return delete_flight(body[0]);

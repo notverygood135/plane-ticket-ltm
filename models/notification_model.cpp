@@ -56,7 +56,7 @@ static int notificationCallback(void *data, int argc, char **argv, char **column
     return 0;
 }
 
-vector<string> get_notifications(string username) {
+vector<string> get_notifications(string email) {
     notification_row_count = 0;
     notification_rows = "[";
     sqlite3 *db;
@@ -72,8 +72,8 @@ vector<string> get_notifications(string username) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT username, \"content\", \"date\", \"time\" FROM notifications WHERE username = \"";
-    sql.append(username);
+    sql = "SELECT email, \"content\", \"date\", \"time\" FROM notifications WHERE email = \"";
+    sql.append(email);
     sql.append("\";");
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
@@ -89,7 +89,7 @@ vector<string> get_notifications(string username) {
     return response;
 }
 
-vector<string> get_unread_notifications_count(string username) {
+vector<string> get_unread_notifications_count(string email) {
     notification_row_count = 0;
     notification_rows = "[";
     sqlite3 *db;
@@ -105,8 +105,8 @@ vector<string> get_unread_notifications_count(string username) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT COUNT(notification_id) as count FROM notifications WHERE username = '";
-    sql.append(username);
+    sql = "SELECT COUNT(notification_id) as count FROM notifications WHERE email = '";
+    sql.append(email);
     sql.append("' AND read = 0;");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
@@ -123,7 +123,7 @@ vector<string> get_unread_notifications_count(string username) {
     return response;
 }
 
-vector<string> update_notifications(string username) {
+vector<string> update_notifications(string email) {
     sqlite3 *db;
     char *err_msg = 0;
     int rc;
@@ -137,8 +137,8 @@ vector<string> update_notifications(string username) {
         response.push_back("");
         return response;
     }
-    sql = "UPDATE notifications SET read = 1 WHERE username = '";
-    sql.append(username);
+    sql = "UPDATE notifications SET read = 1 WHERE email = '";
+    sql.append(email);
     sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
@@ -154,8 +154,8 @@ vector<string> update_notifications(string username) {
     return response;
 }
 
-vector<string> create_notification(string _username, string _content, string _date, string _time) {
-    string username = split(_username, "=")[1];
+vector<string> create_notification(string _email, string _content, string _date, string _time) {
+    string email = split(_email, "=")[1];
     string content = split(_content, "=")[1];
     string date = split(_date, "=")[1];
     string time = split(_time, "=")[1];
@@ -174,8 +174,8 @@ vector<string> create_notification(string _username, string _content, string _da
         response.push_back("");
         return response;
     }
-    sql = "INSERT INTO notifications (username, content, date, time, read) VALUES ('";
-    sql.append(username);
+    sql = "INSERT INTO notifications (email, content, date, time, read) VALUES ('";
+    sql.append(email);
     sql.append("', '");
     sql.append(content);
     sql.append("', '");
@@ -197,7 +197,7 @@ vector<string> create_notification(string _username, string _content, string _da
     return response;
 }
 
-vector<string> delete_notifications(string username) {
+vector<string> delete_notifications(string email) {
     sqlite3 *db;
     char *err_msg = 0;
     int rc;
@@ -211,8 +211,8 @@ vector<string> delete_notifications(string username) {
         response.push_back("");
         return response;
     }
-    sql = "DELETE FROM notifications WHERE username = '";
-    sql.append(username);
+    sql = "DELETE FROM notifications WHERE email = '";
+    sql.append(email);
     sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);

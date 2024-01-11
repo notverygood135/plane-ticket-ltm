@@ -89,7 +89,7 @@ vector<string> get_tickets(string flight_id) {
     return response;
 }
 
-vector<string> get_owned_tickets(string username) {
+vector<string> get_owned_tickets(string email) {
     ticket_row_count = 0;
     ticket_rows = "[";
     sqlite3 *db;
@@ -105,8 +105,8 @@ vector<string> get_owned_tickets(string username) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.username = '";
-    sql.append(username);
+    sql = "SELECT flights.flight_id, \"from\", \"to\", \"date\", \"time\", airline, tickets.ticket_id, seat, price FROM flights JOIN tickets ON flights.flight_id = tickets.flight_id JOIN own ON own.ticket_id = tickets.ticket_id WHERE own.email = '";
+    sql.append(email);
     sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), ticketsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {

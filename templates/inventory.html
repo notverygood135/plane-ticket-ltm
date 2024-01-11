@@ -20,7 +20,7 @@
             
             </div>
             <div class="account">
-                <div class="trigger" ><h1>Hello <span id="username"></span></h1>
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
                     <div>Balance: $<span id="money"></span></div>
                 
                 </div>
@@ -55,26 +55,26 @@
         
 
         //navbar
-        const username = localStorage.getItem("username");
+        const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
-            fetch(`/unread/${username}`, {
+            fetch(`/unread/${email}`, {
                 method: "GET",
             })
             .then(response => {
                 return(response.text());
             })
             .then(data => {
-                
+                const user = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
                 unread.innerText = user.count;
                 const money = document.getElementById("money");
             })
-            fetch(`/user/${username}`, {
+            fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {
@@ -92,10 +92,10 @@
         //
         
         
-        if (username == null || username == "") {
+        if (email == null || email == "") {
             window.location = "http://localhost:8001/login"
         }
-        document.getElementById("username").innerHTML = username;
+        document.getElementById("email").innerHTML = email;
         
         let tickets = [];
         let filteredTickets = [];
@@ -145,7 +145,7 @@
             });
         }
 
-        fetch(`/inventory/${username}`, {
+        fetch(`/inventory/${email}`, {
             method: "GET",
         })
         .then(response => {
@@ -157,7 +157,7 @@
             renderTickets();
         })
 
-        fetch(`/unread/${username}`, {
+        fetch(`/unread/${email}`, {
             method: "GET",
         })
         .then(response => {
@@ -168,7 +168,7 @@
             unread.innerText = JSON.parse(data)[0].count;
         })
 
-        fetch(`/user/${username}`, {
+        fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {

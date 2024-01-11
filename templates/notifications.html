@@ -21,7 +21,10 @@
             
             </div>
             <div class="account">
-                <div class="trigger" ><h1>Hello <span id="username"></span></h1></div>
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
+                    <div>Balance: $<span id="money"></span></div>
+                
+                </div>
                 <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">Logout</a></div>
 
             </div> 
@@ -33,26 +36,26 @@
     </body>
     <script>
          //navbar
-         const username = localStorage.getItem("username");
+         const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
-            fetch(`/unread/${username}`, {
-                method: "GET",
-            })
-            .then(response => {
-                return(response.text());
-            })
-            .then(data => {
-                
-                const unread = document.getElementById("unread");
-                unread.innerText = user.count;
-                const money = document.getElementById("money");
-            })
-            fetch(`/user/${username}`, {
+            // fetch(`/unread/${email}`, {
+            //     method: "GET",
+            // })
+            // .then(response => {
+            //     return(response.text());
+            // })
+            // .then(data => {
+            //     const user = JSON.parse(data)[0];
+            //     const unread = document.getElementById("unread");
+            //     unread.innerText = user.count;
+            //     const money = document.getElementById("money");
+            // })
+            fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {
@@ -72,7 +75,7 @@
 
         const notificationsElement = document.getElementById("notifications");
 
-        fetch(`/notification/${username}`, {
+        fetch(`/notification/${email}`, {
             method: "GET",
         })
         .then(response => {
@@ -93,12 +96,12 @@
             });
         })
 
-        fetch(`/read/${username}`, {
+        fetch(`/read/${email}`, {
             method: "PUT"
         })
 
         function clearNotifications() {
-            fetch(`/notification/${username}`, {
+            fetch(`/notification/${email}`, {
                 method: "DELETE",
             })
             .then(response => {
