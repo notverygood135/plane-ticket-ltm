@@ -29,7 +29,6 @@ static int callback(void *data, int argc, char **argv, char **column) {
         }
     }
     row.append("}");
-    cout << row << endl; 
     user_rows.append(row);
     user_row_count++;
     return 0;
