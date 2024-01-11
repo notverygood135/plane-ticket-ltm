@@ -27,4 +27,4 @@ vector<string> get_passengers(string flight_id);
 vector<string> delete_user(string email);
 vector<string> update_type(string _email, string _type);
 vector<string> update_money(string _email, string _money);
-vector<string> update_bonus(string _email, string _money);
+vector<string> update_bonus(string _email, string _bonus);
