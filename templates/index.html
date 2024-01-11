@@ -25,6 +25,7 @@
             <div class="account">
                 <div class="trigger" ><h1>Hello <span id="email"></span></h1>
                     <div>Balance: $<span id="money"></span></div>
+                    <div>Bonus: <span id="bonus"></span></div>
                 
                 </div>
                 <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
@@ -83,7 +84,6 @@
                 const user = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
                 unread.innerText = user.count;
-                const money = document.getElementById("money");
             })
             fetch(`/user/${email}`, {
             method: "GET"
@@ -95,6 +95,8 @@
             const user = JSON.parse(data)[0];
             const money = document.getElementById("money");
             money.innerText = user.money;
+            const bonus=document.getElementById("bonus");
+            bonus.innerText=user.bonus;
         })
 
         }

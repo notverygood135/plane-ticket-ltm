@@ -22,7 +22,7 @@
             <div class="account">
                 <div class="trigger" ><h1>Hello <span id="email"></span></h1>
                     <div>Balance: $<span id="money"></span></div>
-                
+                    <div>Bonus: $<span id="bonus"></span></div>
                 </div>
                 <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">Logout</a></div>
 
@@ -54,6 +54,9 @@
                 <button type="button" onclick="submit()">Submit</button>
             </div>
         </section>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+
     </body>
     <script>
         //navbar
@@ -86,12 +89,15 @@
             const user = JSON.parse(data)[0];
             const money = document.getElementById("money");
             money.innerText = user.money;
+            const bonus = document.getElementById("bonus");
+            bonus.innerText = user.bonus;
         })
         }
         function logout() {
             localStorage.clear();
         }
         //
+
         const url = window.location.pathname;
         const id = url.split("/")[2];
         let ticket = null;
@@ -128,8 +134,26 @@
             const unread = document.getElementById("unread");
             unread.innerText = JSON.parse(data)[0].count;
         })
+   // gui email
+   function emailSend(email,content,dateString,timeString){
+        Email.send({
+            Host : "smtp.elasticemail.com",
+            Username : "jadeuma235@gmail.com",
+            Password : "CB0F1191C63097515935CD75726D0430C710",
+            To : email,
+            From : "jadeuma235@gmail.com",
+            Subject : `Already Buy an airplane ticket date: ${dateString} time : ${timeString}` ,
+            Body : content,
+            }).then(
+            message => {
 
+                console.log(message);
+            
+            }
+        );
+    }
         function submit() {
+           
             const email = localStorage.getItem("email");
             if (email == null) {
                 window.location = "http://localhost:8001/login";
@@ -139,17 +163,10 @@
             let expirationDate = document.getElementById("expiration-date").value;
             let securityCode = document.getElementById("security-code").value;
             let fullName = document.getElementById("full-name").value;
-            let bonus = 0; // diem thuong moi cua nguoi dung
-            console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
+            let bonusAll = 0;
             
-            const requestOptionsOwn = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/html"
-                },
-                body: 
-                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus}`
-            }
+            console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
+        
 
             const content = `Boarding pass confirmed\\nDear ${email},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
 
@@ -168,9 +185,34 @@
                 },
                 body: 
                     `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
-            }
+            };
+
+            emailSend(email,content,dateString,timeString);
             
-            fetch("/own", requestOptionsOwn)
+            fetch(`/user/${email}`, {
+            method: "GET"
+            })
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                bonusAll=parseInt(user.bonus,10)+Math.floor(ticket.price/100);
+                console.log(`1....... ${typeof bonusAll}`);
+                ownNotification(bonusAll);
+                
+            });
+
+            function ownNotification(bonus) {
+                console.log(`2.......${bonus}`);
+            fetch("/own", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: 
+                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus.toString()}`
+            })
             .then(response => {
                 return(response.status);
             })
@@ -182,15 +224,26 @@
                     })
                     .then(status => {
                         if (status == 200) {
-                            alert("You have a new notification!");
-                            window.location.replace("http://localhost:8001/notifications");
-                        }
+                            
+                    swal("Successful", "You have a new notification!", "success");
+                   const result= document.querySelector(".swal-button");
+                       result.addEventListener('click',function () {
+                        window.location.replace("http://localhost:8001/notifications");
+                       });
+                }
                     })
                 }
                 else {
-                    alert("Error");
+                    
+                    swal("Error", "You clicked the button!", "error");
                 }
             })
+            }
+            
+        
+            
         }
+     
+
     </script>
 </html>
