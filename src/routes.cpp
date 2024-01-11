@@ -16,8 +16,7 @@ unordered_map<string, string> template_routes = {
     {"/notifications", "notifications"},
     {"/manage/flights", "index_admin"},
     {"/manage/users", "users_admin"},
-    
-   
+    {"/manage/tickets", "tickets_admin"},
 };
 
 vector<string> get(string route) {
@@ -167,7 +166,11 @@ vector<string> req(string method, string route, string payload) {
     vector<string> response;
     // neu client yeu cau file css
     if (route.find("css") != string::npos) {
-        route = route.substr(1, route.length() - 1);
+        // route = route.substr(1, route.length() - 1);
+        string static_file = split(route, "/")[split(route, "/").size() - 1];
+        route = "static/";
+        route.append(static_file);
+        cout << route << endl;
         response.push_back("HTTP/1.1 200 OK\r\n\r\n");
         response.push_back(route);
         return response;
