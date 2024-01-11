@@ -2,13 +2,13 @@
 <html>
     <body>
         <h1>register</h1>
-        <input type="text" name="username" id="username" placeholder="Username">
+        <input type="email" name="email" id="email" placeholder="Email">
         <input type="password" name="password" id="password" placeholder="Password">
         <input type="password" name="confirm" id="confirm" placeholder="Confirm password">
         <button type="button" onclick="submit()">Submit</button>
         <script>
             function submit() {
-                let username = document.getElementById("username").value;
+                let email = document.getElementById("email").value;
                 let password = document.getElementById("password").value;
                 let confirm = document.getElementById("confirm").value;
                 fetch("/register", {
@@ -16,7 +16,7 @@
                     headers: {
                         "Content-Type": "text/html"
                     },
-                    body: `username=${username}&password=${password}&confirm=${confirm}`
+                    body: `email=${email}&password=${password}&confirm=${confirm}`
                 })
                 .then(response => {
                     return(response.status);
@@ -26,7 +26,7 @@
                         window.location.replace("http://localhost:8001/login");
                     }
                     else {
-                        alert("Invalid username or password");
+                        alert("Invalid email or password");
                     }
                 })
             }

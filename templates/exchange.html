@@ -20,7 +20,7 @@
             
             </div>
             <div class="account">
-                <div class="trigger" ><h1>hello <span id="username"></span></h1>
+                <div class="trigger" ><h1>hello <span id="email"></span></h1>
                     <div>money: <span id="money"></span></div>
                 
                 </div>
@@ -69,26 +69,25 @@
     </body>
     <script>
        //navbar
-       const username = localStorage.getItem("username");
+       const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
-            fetch(`/unread/${username}`, {
+            fetch(`/unread/${email}`, {
                 method: "GET",
             })
             .then(response => {
                 return(response.text());
             })
             .then(data => {
-                
+                const userNotifications = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
-                unread.innerText = user.count;
-                const money = document.getElementById("money");
+                unread.innerText = userNotifications.count;
             })
-            fetch(`/user/${username}`, {
+            fetch(`/user/${email}`, {
             method: "GET"
         })
         .then(response => {
@@ -231,7 +230,7 @@
             renderFlights();
         })
 
-        fetch(`/unread/${username}`, {
+        fetch(`/unread/${email}`, {
             method: "GET",
         })
         .then(response => {

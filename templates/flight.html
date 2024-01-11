@@ -4,78 +4,79 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<body>
-    <div id="navbar">
-        <div class="logo">
-            <a href="http://localhost:8001">
-                <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
-            </a>
-        </div>
-        <div id="navbar_list">
-            <a href="http://localhost:8001">home</a>
-            <a href="http://localhost:8001/login" class="auth">login</a>
-            <a href="http://localhost:8001/register" class="auth">register</a>
-            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-        </div>
-        <div class="account">
-            <div class="trigger" ><h1>Hello <span id="username"></span></h1>
-                <div>Balance: $<span id="money"></span></div>
-            
+    <body>
+        <div id="navbar">
+            <div class="logo">
+                <a href="http://localhost:8001">
+                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                </a>
             </div>
-            <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+            <div id="navbar_list">
+                <a href="http://localhost:8001">home</a>
+                <a href="http://localhost:8001/login" class="auth">login</a>
+                <a href="http://localhost:8001/register" class="auth">register</a>
+                <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+                <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            </div>
+            <div class="account">
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
+                    <div>Balance: $<span id="money"></span></div>
+                
+                </div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
 
-        </div> 
-    </div>
-
-    <div id="flights-info">
-        <div id="flight-info">
-            <div class="flight-info-column">Flight: <span id="flight"></span></div>
-            <div class="flight-info-column">From: <span id="from"></span></div>
-            <div class="flight-info-column">To: <span id="to"></span></div>
-            <div class="flight-info-column">Airline: <span id="airline"></span></div>
-            <div class="flight-info-column">Date: <span id="date"></span></div>
-            <div class="flight-info-column">Time: <span id="time"></span></div>
+            </div> 
         </div>
-        <ul id="tickets"></ul>
-        
-    </div>
-    <button id="exchange"> Exchange </button>
-</body>
 
-<script>
-    //navbar
-    const username = localStorage.getItem("username");
+        <div id="flights-info">
+            <div id="flight-info">
+                <div class="flight-info-column">Flight: <span id="flight"></span></div>
+                <div class="flight-info-column">From: <span id="from"></span></div>
+                <div class="flight-info-column">To: <span id="to"></span></div>
+                <div class="flight-info-column">Airline: <span id="airline"></span></div>
+                <div class="flight-info-column">Date: <span id="date"></span></div>
+                <div class="flight-info-column">Time: <span id="time"></span></div>
+            </div>
+            <ul id="tickets"></ul>
+            
+        </div>
+        <button id="exchange"> Exchange </button>
+    </body>
+
+    <script>
+        //navbar
+        const email = localStorage.getItem("email");
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
-        if (username != "" && username != null) {
-            document.getElementById("username").innerHTML = username;
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
             navElements.forEach(item => item.style.display = "flex");
-            fetch(`/unread/${username}`, {
+            fetch(`/unread/${email}`, {
                 method: "GET",
             })
             .then(response => {
                 return(response.text());
             })
             .then(data => {
-                
+                const userNotifications = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
-                unread.innerText = user.count;
+                unread.innerText = userNotifications.count;
                 const money = document.getElementById("money");
             })
-            fetch(`/user/${username}`, {
-            method: "GET"
-        })
-        .then(response => {
-            return response.text();
-        })
-        .then(data => {
-            const user = JSON.parse(data)[0];
-            const money = document.getElementById("money");
-            money.innerText = user.money;
-        })
+            fetch(`/user/${email}`, {
+                method: "GET"
+            })
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                const money = document.getElementById("money");
+                money.innerText = user.money;
+            })
         }
+
         function logout() {
             localStorage.clear();
         }
@@ -95,13 +96,12 @@
     
     //function ownOldToNew
     function ownOldToNew(ticket){
-        const username = localStorage.getItem("username");
-        if (username == null) {
+        const email = localStorage.getItem("email");
+        if (email == null) {
             window.location = "http://localhost:8001/login";
             return;
         }
       
-
         fetch(`/own/${old_id_string}`, {
             method: "GET",
         })
@@ -115,17 +115,19 @@
             var number=own_data[0].number;
             var expirationDate=own_data[0]['expiration_date'];
             var securityCode=own_data[0]['security_code'];
-           var  fullName=own_data[0]['full_name'];
-           const requestOptionsOwn = {
+            var fullName=own_data[0]['full_name'];
+            let bonus = 0; // diem thuong moi cua nguoi dung
+            
+            const requestOptionsOwn = {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&ticket_id=${new_id_string}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
+                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus}`
             }
 
-            const content = `Exchange ticket confirmed\\nDear ${username},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
+            const content = `Exchange ticket confirmed\\nDear ${email},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
     
             const date = new Date();
             const dateString = date.toISOString().split('T')[0];
@@ -141,7 +143,7 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+                    `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
             }
             
             fetch("/own", requestOptionsOwn)
@@ -183,12 +185,13 @@
             console.log(data);
             var ticket_old=JSON.parse(data);
             console.log(`3.${old_id_string}`);
-        fetch(`/own/${old_id_string}`, {
+            
+            fetch(`/own`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "text/html"
                 },
-                body: `ticket_id=${old_id_string}&money=${+ticket_old[0].price}`
+                body: `email=${email}&ticket_id=${old_id_string}&money=${-ticket_old[0].price}`
             })
             .then(response => {
                 return(response.status);
@@ -210,38 +213,34 @@
     }
     //function exchange
     function exchange(ticketnew) {
-
         ownOldToNew(ticketnew);
         deleteOld(ticketnew)
-        
-        }
+    }
+
     // function xu ly khi nguoi dung chon 
-    function pick(new_id_string){
-        
-        
+    function pick(new_id_string){   
         exchange_div.onclick = function(){
          
-        fetch(`/ticket/${new_id_string}`, {
-            method: "GET",
-        })
-        .then(response => {
-            return(response.text());
-        })
-        .then(data => {
-            console.log(data);
-            var ticket_new=JSON.parse(data);
-             var result = confirm(`${data} Ban da chac chan?`);
-             if(result){
-                exchange(ticket_new);
-            }
-            else{
-                window.location.reload();
-            }
-        })
-            
-           
+            fetch(`/ticket/${new_id_string}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                console.log(data);
+                var ticket_new=JSON.parse(data);
+                var result = confirm(`${data} Ban da chac chan?`);
+                if(result){
+                    exchange(ticket_new);
+                }
+                else{
+                    window.location.reload();
+                }
+            })
         }
     }
+
     function renderTickets() {
         const ul = document.getElementById("tickets");
         ul.innerHTML = ""; // xoa cac element da co de them tu dau
@@ -299,7 +298,7 @@
             renderTickets();
         })
 
-        fetch(`/unread/${username}`, {
+        fetch(`/unread/${email}`, {
             method: "GET",
         })
         .then(response => {

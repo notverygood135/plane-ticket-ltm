@@ -53,9 +53,9 @@
         let filteredFlights = [];
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
-        const username = localStorage.getItem("username");
+        const email = localStorage.getItem("email");
 
-        if (username != "admin") {
+        if (email != "admin") {
             const manage = document.getElementById("manage");
             manage.innerText = "";
         }

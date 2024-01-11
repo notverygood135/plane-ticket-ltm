@@ -84,9 +84,9 @@
             const ul = document.getElementById("passengers");
             passengersData.forEach(passenger => {
                 const li = document.createElement("li");
-                li.innerText = passenger.username;
+                li.innerText = passenger.email;
                 ul.appendChild(li);
-                passengers.push(passenger.username);
+                passengers.push(passenger.email);
             });
         })
 
@@ -114,7 +114,7 @@
         }
 
         function notifyPassenger(passenger, action) {
-            const username = passenger;
+            const email = passenger;
             const from = document.getElementById("from").innerText;
             const to = document.getElementById("to").innerText;
             const newDate = document.getElementById("date").value;
@@ -130,10 +130,10 @@
 
             let content = ""
             if (action == "change") {
-                content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been rescheduled to another time:\\n${newTime}, ${newDate}\\nWe apologise for any inconvenience this may cause you\\nSafe travels!`;
+                content = `Dear ${email},\\nFlight #${id}, from ${from} to ${to} has been rescheduled to another time:\\n${newTime}, ${newDate}\\nWe apologise for any inconvenience this may cause you\\nSafe travels!`;
             }
             else if (action == "cancel") {
-                content = `Dear ${username},\\nFlight #${id}, from ${from} to ${to} has been cancelled.\\nWe apologise for any inconvenience this may cause you\\n`;
+                content = `Dear ${email},\\nFlight #${id}, from ${from} to ${to} has been cancelled.\\nWe apologise for any inconvenience this may cause you\\n`;
             }
 
             const requestOptionsNotification = {
@@ -142,7 +142,7 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `username=${username}&content=${content}&date=${dateString}&time=${timeString}`
+                    `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
             }
 
             fetch("/notification", requestOptionsNotification);

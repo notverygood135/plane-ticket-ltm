@@ -76,8 +76,8 @@ vector<string> get_ownership(string ticket_id) {
     return response;
 }
 
-vector<string> create_ownership(string _username, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date) {
-    string username = split(_username, "=")[1];
+vector<string> create_ownership(string _email, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date) {
+    string email = split(_email, "=")[1];
     string ticket_id = split(_ticket_id, "=")[1];
     string full_name = split(_full_name, "=")[1];
     string number = split(_number, "=")[1];
@@ -98,7 +98,7 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
         return response;
     }
     sql = "INSERT INTO own VALUES ('";
-    sql.append(username);
+    sql.append(email);
     sql.append("', '");
     sql.append(ticket_id);
     sql.append("', '");
@@ -115,8 +115,8 @@ vector<string> create_ownership(string _username, string _ticket_id, string _ful
     sql.append("';\n");
     sql.append("UPDATE users SET money = money - (SELECT price from tickets WHERE ticket_id = '");
     sql.append(ticket_id);
-    sql.append("') WHERE username = '");
-    sql.append(username);
+    sql.append("') WHERE email = '");
+    sql.append(email);
     sql.append("';");
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), NULL, 0, &err_msg);
