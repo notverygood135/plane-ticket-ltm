@@ -322,7 +322,7 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
+                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&book_date=${dateString}`
             })
             .then(response => {
                 return(response.status);
