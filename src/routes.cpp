@@ -14,6 +14,7 @@ unordered_map<string, string> template_routes = {
     {"/flight", "flight"},
     {"/inventory", "inventory"},
     {"/notifications", "notifications"},
+    {"/ranking", "ranking"},
     {"/manage/flights", "index_admin"},
     {"/manage/users", "users_admin"},
     {"/manage/tickets", "tickets_admin"},
@@ -95,6 +96,9 @@ vector<string> get(string route) {
     }
     else if (parsed_route == "owns") {
         response = get_ownerships();
+    }
+    else if (parsed_route == "top") {
+        response = get_top_users();
     }
     else {
         cout << "unknown route: " << route << endl;
