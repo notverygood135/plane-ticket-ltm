@@ -97,9 +97,6 @@ vector<string> get(string route) {
     else if (parsed_route == "owns") {
         response = get_ownerships();
     }
-    else if (parsed_route == "top") {
-        response = get_top_users();
-    }
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};
@@ -116,7 +113,7 @@ vector<string> post(string route, string payload) {
         return login(body[0], body[1]);
     }
     else if (route == "/own") {
-        return create_ownership(body[0], body[1], body[2], body[3], body[4], body[5]);
+        return create_ownership(body[0], body[1], body[2], body[3], body[4], body[5], body[6]);
     }
     else if (route == "/notification") {
         return create_notification(body[0], body[1], body[2], body[3]);
@@ -140,9 +137,6 @@ vector<string> put(string route, string payload) {
     }
     else if (parsed_route == "bonus") {
         return update_bonus(body[0], body[1]);
-    }
-    else if(parsed_route =="money"){
-        return update_money(body[0],body[1]);
     }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }

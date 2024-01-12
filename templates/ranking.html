@@ -42,8 +42,7 @@
     </body>
 
     <script>
-        let flights = [];
-        let filteredFlights = [];
+        const userTicketCount = {};
 
         // hien thi elements tuy thuoc vao trang thai dang nhap
         const email = localStorage.getItem("email");
@@ -90,35 +89,45 @@
             localStorage.clear();
         }
 
-        fetch("/top", {
+        fetch("/owns", {
             method: "GET",
         })
         .then(response => {
             return(response.text());
         })
         .then(data => {
-            users = JSON.parse(data);
+            const users = JSON.parse(data);
             console.log(users);
+            
+            users.forEach(user => {
+                const date = new Date(user.book_date);
+                const currentDate = new Date();
+
+                if (date.getMonth() == currentDate.getMonth()) {
+                    userTicketCount[user.email] = user.email in userTicketCount ? userTicketCount[user.email] + 1 : 1;
+                }
+            });
+            renderUsers();
+        });
+
+        function renderUsers() {
             const ul = document.getElementById("users");
             ul.innerHTML = ""; // xoa cac element da co de them tu dau
-            users.forEach(user => {
+            const keys = Object.keys(userTicketCount).sort((a, b) => userTicketCount[b] - userTicketCount[a]);
+            keys.forEach(user => {
                 const li = document.createElement("li");
                 li.className = "user";
 
                 const email = document.createElement("span");
-                email.textContent = user.email;
+                email.textContent = user;
 
                 const count = document.createElement("span");
-                count.textContent = user.count;
-
-                if (user.type == "1") {
-                    return;
-                }
+                count.textContent = userTicketCount[user];
 
                 li.appendChild(email);
                 li.appendChild(count);
                 ul.appendChild(li);
             });
-        })
+        }
     </script>
 </html>

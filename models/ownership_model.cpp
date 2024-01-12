@@ -93,7 +93,7 @@ vector<string> get_ownerships() {
         response.push_back("");
         return response;
     }
-    sql = "SELECT tickets.flight_id, \"from\", \"to\", date, time, airline, tickets.ticket_id, seat, price, email FROM own JOIN tickets ON own.ticket_id = tickets.ticket_id JOIN flights ON tickets.flight_id = flights.flight_id;";
+    sql = "SELECT tickets.flight_id, \"from\", \"to\", date, time, airline, tickets.ticket_id, seat, price, email, book_date FROM own JOIN tickets ON own.ticket_id = tickets.ticket_id JOIN flights ON tickets.flight_id = flights.flight_id;";
     cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), getCallback, 0, &err_msg);
 
@@ -110,13 +110,14 @@ vector<string> get_ownerships() {
     return response;
 }
 
-vector<string> create_ownership(string _email, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date) {
+vector<string> create_ownership(string _email, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date, string _book_date) {
     string email = split(_email, "=")[1];
     string ticket_id = split(_ticket_id, "=")[1];
     string full_name = split(_full_name, "=")[1];
     string number = split(_number, "=")[1];
     string security_code = split(_security_code, "=")[1];
     string expiration_date = split(_expiration_date, "=")[1];
+    string book_date = split(_book_date, "=")[1];
     
     sqlite3 *db;
     char *err_msg = 0;
@@ -143,6 +144,8 @@ vector<string> create_ownership(string _email, string _ticket_id, string _full_n
     sql.append(security_code);
     sql.append("', '");
     sql.append(expiration_date);
+    sql.append("', '");
+    sql.append(book_date);
     sql.append("');\n");
     sql.append("UPDATE tickets SET owned = 1 WHERE ticket_id = '");
     sql.append(ticket_id);
