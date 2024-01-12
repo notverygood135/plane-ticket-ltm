@@ -93,6 +93,9 @@ vector<string> get(string route) {
         string ticket_id = route_parse[route_parse.size() - 1];
         response = get_ownership(ticket_id);
     }
+    else if (parsed_route == "owns") {
+        response = get_ownerships();
+    }
     else {
         cout << "unknown route: " << route << endl;
         response = {"HTTP/1.1 404 Not Found\r\n\r\n", "templates/error.html"};

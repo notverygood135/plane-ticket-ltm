@@ -76,6 +76,40 @@ vector<string> get_ownership(string ticket_id) {
     return response;
 }
 
+vector<string> get_ownerships() {
+    own_row_count = 0;
+    own_rows = "[";
+
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "SELECT tickets.flight_id, \"from\", \"to\", date, time, airline, tickets.ticket_id, seat, price, email FROM own JOIN tickets ON own.ticket_id = tickets.ticket_id JOIN flights ON tickets.flight_id = flights.flight_id;";
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), getCallback, 0, &err_msg);
+
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    own_rows.append("]");
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(own_rows);
+    return response;
+}
+
 vector<string> create_ownership(string _email, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date) {
     string email = split(_email, "=")[1];
     string ticket_id = split(_ticket_id, "=")[1];

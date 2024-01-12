@@ -227,7 +227,7 @@ vector<string> update_money(string _email, string _money) {
     }
     sql = "UPDATE users SET money = money - ";
     sql.append(money);
-    sql.append(" WHERE username = '");
+    sql.append(" WHERE email = '");
     sql.append(email);
     sql.append("';");
     cout << sql << endl;
