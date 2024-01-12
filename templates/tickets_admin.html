@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../static/tickets_admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <body>
+        <div id="navbar">
+            <div class="logo">
+                <a href="http://localhost:8001">
+                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                </a>
+            </div>
+            <div id="navbar_list">
+            <a href="http://localhost:8001">home</a>
+            <a href="http://localhost:8001/login" class="auth">login</a>
+            <a href="http://localhost:8001/register" class="auth">register</a>
+            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+            <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            
+            </div>
+            <div class="account">
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
+                    <div>Balance: $<span id="money"></span></div>
+                    <div>Bonus: $<span id="bonus"></span></div>
+                
+                </div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+
+            </div> 
+        </div>
+
+        <div id="tickets-info">
+            <div id="tickets-search">
+                <input type="text" name="from" id="from" placeholder="From">
+                <input type="text" name="to" id="to" placeholder="To">
+                <input type="airline" name="airline" id="airline" placeholder="Airline">
+                <input type="datetime-local" name="datetime" id="datetime">
+                <button type="button" onclick="filter()">Filter</button>
+            </div>
+            <div id="tickets-column">
+                <span>Flight</span>
+                <span>From</span>
+                <span>To</span>
+                <span>Date</span>
+                <span>Time</span>
+                <span>Airline</span>
+                <span>Ticket</span>
+                <span>Seat</span>
+                <span>Price</span>
+                <span>Owner</span>
+                <button type="button" onclick="deleteAll()">Reset Tickets</button>
+            </div>
+            <ul id="tickets"></ul>
+        </div>
+    </body>
+    <script>
+        
+
+        //navbar
+        const email = localStorage.getItem("email");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "flex");
+            fetch(`/unread/${email}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                const unread = document.getElementById("unread");
+                unread.innerText = user.count;
+                const money = document.getElementById("money");
+            })
+            fetch(`/user/${email}`, {
+                method: "GET"
+            })
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                const money = document.getElementById("money");
+                money.innerText = user.money;
+                const bonus = document.getElementById("bonus");
+                bonus.innerText = user.bonus;
+            })
+            }
+            function logout() {
+                localStorage.clear();
+            }
+        //
+        
+        
+        if (email == null || email == "") {
+            window.location = "http://localhost:8001/login"
+        }
+        document.getElementById("email").innerHTML = email;
+        
+        let tickets = [];
+        let filteredTickets = [];
+
+        function filter() {
+            let from = document.getElementById("from").value;
+            let to = document.getElementById("to").value;
+            let airline = document.getElementById("airline").value;
+            let datetime= document.getElementById("datetime").value;
+            filteredTickets = tickets;
+            console.log(`from: ${from}, to: ${to}, datetime: ${datetime}`);
+            if (from != "") {
+                filteredTickets = filteredTickets.filter(flight => 
+                    flight.from.includes(from));
+            }
+            if (to != "") {
+                filteredTickets = filteredTickets.filter(flight => 
+                    flight.to.includes(to));
+            }
+            if (airline != "") {
+                filteredTickets = filteredTickets.filter(flight => 
+                    flight.airline.includes(airline));
+            }
+            if (datetime != "") {
+                filteredTickets = filteredTickets.filter(flight => 
+                    Date.parse(datetime)== Date.parse(`${flight.date}T${flight.time}:00`));
+            }
+            renderTickets();
+        }
+
+        function renderTickets() {
+            const ul = document.getElementById("tickets");
+            ul.innerHTML = ""; // xoa cac element da co de them tu dau
+            filteredTickets.forEach(ticket => {
+                const li = document.createElement("li");
+                li.className = "ticket";                                                                                                                                                                                                                                                                     
+                for (const key in ticket) {
+                    const span = document.createElement("span");
+                    span.textContent = ticket[key];
+                    li.appendChild(span);
+                }
+                const button = document.createElement("button");
+                button.setAttribute("href", `http://localhost:8001/info/${ticket.ticket_id}`);
+                button.innerHTML = "Delete";
+                button.addEventListener("click", e => {
+                    if(confirm("Are you sure you want to cancel this booking?")) {
+                        deleteTicket(ticket);
+                    }
+                });
+
+                li.appendChild(button);                                                                                                                                                                                                            +
+                ul.appendChild(li);
+            });
+        }
+
+        fetch('/owns', {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            tickets = JSON.parse(data);
+            filteredTickets = tickets;
+            renderTickets();
+        });
+
+        fetch(`/unread/${email}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const unread = document.getElementById("unread");
+            unread.innerText = JSON.parse(data)[0].count;
+        })
+
+        fetch(`/user/${email}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
+        })
+
+        function logout() {
+            localStorage.clear();
+        }
+
+        function deleteTicket(ticket) {
+            fetch(`/own`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: `email=${ticket.email}&ticket_id=${ticket.ticket_id}&money=${-ticket.price}`
+            })
+            .then(response => {
+                return(response.status);
+            })
+            .then(status => {
+                if (status == 200) {
+                    fetch('/owns', {
+                        method: "GET",
+                    })
+                    .then(response => {
+                        return(response.text());
+                    })
+                    .then(data => {
+                        tickets = JSON.parse(data);
+                        filteredTickets = tickets;
+                        renderTickets();
+                    })
+                }
+                else {
+                    alert("Error");
+                }
+            });
+        }
+
+        function deleteAll() {
+            if(confirm("Are you sure you want to cancel ALL tickets?")) {
+                tickets.forEach(ticket => deleteTicket(ticket));
+            }
+        }
+    </script>
+</html>
