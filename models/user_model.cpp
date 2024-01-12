@@ -100,6 +100,38 @@ vector<string> get_users() {
     return response;
 }
 
+vector<string> get_top_users() {
+    user_row_count = 0;
+    user_rows = "[";
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "SELECT users.email, COUNT(users.email) as count FROM own JOIN users ON own.email = users.email GROUP BY users.email ORDER BY count DESC;";
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        sqlite3_close(db);
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    user_rows.append("]");
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back(user_rows);
+    return response;
+}
+
 vector<string> get_passengers(string flight_id) {
     user_row_count = 0;
     user_rows = "[";

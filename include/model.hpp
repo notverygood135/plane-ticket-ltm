@@ -24,6 +24,7 @@ vector<string> delete_notifications(string email);
 
 vector<string> get_user(string email);
 vector<string> get_users();
+vector<string> get_top_users();
 vector<string> get_passengers(string flight_id);
 vector<string> delete_user(string email);
 vector<string> update_type(string _email, string _type);

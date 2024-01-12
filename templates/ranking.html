@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../static/ranking.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <body>
+        <div id="navbar">
+            <div class="logo">
+                <a href="http://localhost:8001">
+                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                </a>
+            </div>
+            
+            <div id="navbar_list">
+                
+                <a href="http://localhost:8001">home</a>
+                <a href="http://localhost:8001/login" class="auth">login</a>
+                <a href="http://localhost:8001/register" class="auth">register</a>
+                <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+                <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+            
+            </div>
+
+            <div class="account">
+                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
+                    <div>Balance: $<span id="money"></span></div>
+                    <div>Bonus: <span id="bonus"></span></div>
+                
+                </div>
+                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+
+            </div>
+        <div id="users-column">
+            <span>Email</span>
+            <span>Tickets bought this month</span>
+        </div>
+        </div>
+            <ul id="users"></ul>
+        </div>
+
+    </body>
+
+    <script>
+        let flights = [];
+        let filteredFlights = [];
+
+        // hien thi elements tuy thuoc vao trang thai dang nhap
+        const email = localStorage.getItem("email");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
+            authElements.forEach(item => item.style.display = "none");
+            navElements.forEach(item => item.style.display = "flex");
+
+            fetch(`/unread/${email}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                const unread = document.getElementById("unread");
+                unread.innerText = user.count;
+            })
+            fetch(`/user/${email}`, {
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
+            const bonus=document.getElementById("bonus");
+            bonus.innerText=user.bonus;
+        })
+
+        }
+        else {
+            authElements.forEach(item => item.style.display = "flex");
+            navElements.forEach(item => item.style.display = "none");
+        }
+
+        // xoa data nguoi dung duoc luu trong ls
+        function logout() {
+            localStorage.clear();
+        }
+
+        fetch("/top", {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            users = JSON.parse(data);
+            console.log(users);
+            const ul = document.getElementById("users");
+            ul.innerHTML = ""; // xoa cac element da co de them tu dau
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.className = "user";
+
+                const email = document.createElement("span");
+                email.textContent = user.email;
+
+                const count = document.createElement("span");
+                count.textContent = user.count;
+
+                if (user.type == "1") {
+                    return;
+                }
+
+                li.appendChild(email);
+                li.appendChild(count);
+                ul.appendChild(li);
+            });
+        })
+    </script>
+</html>
