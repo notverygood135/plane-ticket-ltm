@@ -6,26 +6,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="navbar">
-            <div class="logo">
-                <a href="http://localhost:8001">
-                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
-                </a>
-            </div>
-
-            <div id="navbar_list">
-            <a href="http://localhost:8001">home</a>
-            <a href="http://localhost:8001/login" class="auth">login</a>
-            <a href="http://localhost:8001/register" class="auth">register</a>
-            <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-            <a href="http://localhost:8001/notifications" class="nav">notifications</a>
-            
-            </div>
-            <div class="account">
-                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
-                    <div>Balance: $<span id="money"></span></div>
+            <div class="mainNav">
+                <div class="logo">
+                    <a href="http://localhost:8001">
+                        <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                    </a>
+                </div>
+                
+                <div id="navbar_list">
+                    
+                    <a href="http://localhost:8001">home</a>
+                    <a href="http://localhost:8001/login" class="auth">login</a>
+                    <a href="http://localhost:8001/register" class="auth">register</a>
+                    <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+                    <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
                 
                 </div>
-                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">Logout</a></div>
+             </div>
+
+            <div  id="account" class="nav">
+                <div id="trigger"class="trigger" >
+                    <div class="hello">
+                        <h1>Hello <span id="email"></span></h1>
+                    </div>
+                    <div class="infoUser">
+                        <div>Balance: $<span id="money"></span></div>
+                        <div>Bonus: <span id="bonus"></span></div>
+                    </div>
+                </div>
+                <div id="menu" class="menu"><a href="http://localhost:8001" onclick="logout()" >logout</a></div>
 
             </div> 
         </div>
@@ -42,19 +51,19 @@
         if (email != "" && email != null) {
             document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "flex");
-            // fetch(`/unread/${email}`, {
-            //     method: "GET",
-            // })
-            // .then(response => {
-            //     return(response.text());
-            // })
-            // .then(data => {
-            //     const user = JSON.parse(data)[0];
-            //     const unread = document.getElementById("unread");
-            //     unread.innerText = user.count;
-            //     const money = document.getElementById("money");
-            // })
+           
+
+            fetch(`/unread/${email}`, {
+                method: "GET",
+            })
+            .then(response => {
+                return(response.text());
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                const unread = document.getElementById("unread");
+                unread.innerText = user.count;
+            })
             fetch(`/user/${email}`, {
             method: "GET"
         })
@@ -65,11 +74,34 @@
             const user = JSON.parse(data)[0];
             const money = document.getElementById("money");
             money.innerText = user.money;
+            const bonus=document.getElementById("bonus");
+            bonus.innerText=user.bonus;
         })
+
         }
+        else {
+            authElements.forEach(item => item.style.display = "flex");
+            navElements.forEach(item => item.style.display = "none");
+        }
+        // hien thi logout
+        let checkMenu=false;
+        document.getElementById("trigger").addEventListener('click',function() {
+            checkMenu=!checkMenu;
+            if(checkMenu===true){
+                document.getElementById("menu").style.visibility="visible";
+            }
+            else{
+                document.getElementById("menu").style.visibility="hidden";
+            }
+
+        });
+        // xoa data nguoi dung duoc luu trong ls
         function logout() {
             localStorage.clear();
         }
+        // xoa LocalStorage.item ticket_id_old 
+        localStorage.removeItem('ticket_id_old');
+
         //
         
 

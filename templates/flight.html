@@ -6,28 +6,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
         <div id="navbar">
-            <div class="logo">
-                <a href="http://localhost:8001">
-                    <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
-                </a>
-            </div>
-            <div id="navbar_list">
-                <a href="http://localhost:8001">home</a>
-                <a href="http://localhost:8001/login" class="auth">login</a>
-                <a href="http://localhost:8001/register" class="auth">register</a>
-                <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-                <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
-            </div>
-            <div class="account">
-                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
-                    <div>Balance: $<span id="money"></span></div>
+            <div class="mainNav">
+                <div class="logo">
+                    <a href="http://localhost:8001">
+                        <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                    </a>
+                </div>
+                
+                <div id="navbar_list">
+                    
+                    <a href="http://localhost:8001">home</a>
+                    <a href="http://localhost:8001/login" class="auth">login</a>
+                    <a href="http://localhost:8001/register" class="auth">register</a>
+                    <a href="http://localhost:8001/inventory" class="nav">inventory</a>
+                    <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
                 
                 </div>
-                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
+             </div>
+
+            <div  id="account" class="nav">
+                <div id="trigger"class="trigger" >
+                    <div class="hello">
+                        <h1>Hello <span id="email"></span></h1>
+                    </div>
+                    <div class="infoUser">
+                        <div>Balance: $<span id="money"></span></div>
+                        <div>Bonus: <span id="bonus"></span></div>
+                    </div>
+                </div>
+                <div id="menu" class="menu"><a href="http://localhost:8001" onclick="logout()" >logout</a></div>
 
             </div> 
         </div>
-
+        <div id="main">
         <div id="flights-info">
             <div id="flight-info">
                 <div class="flight-info-column">Flight: <span id="flight"></span></div>
@@ -40,8 +51,39 @@
             <ul id="tickets"></ul>
             
         </div>
+        <div id="ticket-information" >
+            <div id="ticket-old">
+                <h1 style="color: red;">Old Ticket</h1>
+                <div>Flight: <span id="flightOld"></span></div>
+                <div>From: <span id="fromOld"></span></div>
+                <div>To: <span id="toOld"></span></div>
+                <div>Date: <span id="dateOld"></span></div>
+                <div>Time: <span id="timeOld"></span></div>
+                <div>Airline: <span id="airlineOld"></span></div>
+                <div>Ticket: <span id="ticketOld"></span></div>
+                <div>Seat: <span id="seatOld"></span></div>
+                <div>Price: <span id="priceOld"></span></div>
+            </div>
+            <div id="image"><img src="https://icons.veryicon.com/png/o/miscellaneous/simple-icon/exchange-14.png"/></div>
+            <div id="ticket-new">
+                <h1 style="color: green;"> New Ticket</h1>
+                <div>Flight: <span id="flightNew"></span></div>
+                <div>From: <span id="fromNew"></span></div>
+                <div>To: <span id="toNew"></span></div>
+                <div>Date: <span id="dateNew"></span></div>
+                <div>Time: <span id="timeNew"></span></div>
+                <div>Airline: <span id="airlineNew"></span></div>
+                <div>Ticket: <span id="ticketNew"></span></div>
+                <div>Seat: <span id="seatNew"></span></div>
+                <div>Price: <span id="priceNew"></span></div>
+            </div>
+        </div>
+    </div>
         <button id="exchange"> Exchange </button>
     </body>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+
 
     <script>
         //navbar
@@ -51,7 +93,8 @@
         if (email != "" && email != null) {
             document.getElementById("email").innerHTML = email;
             authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "flex");
+           
+
             fetch(`/unread/${email}`, {
                 method: "GET",
             })
@@ -59,24 +102,42 @@
                 return(response.text());
             })
             .then(data => {
-                const userNotifications = JSON.parse(data)[0];
+                const user = JSON.parse(data)[0];
                 const unread = document.getElementById("unread");
-                unread.innerText = userNotifications.count;
-                const money = document.getElementById("money");
+                unread.innerText = user.count;
             })
             fetch(`/user/${email}`, {
-                method: "GET"
-            })
-            .then(response => {
-                return response.text();
-            })
-            .then(data => {
-                const user = JSON.parse(data)[0];
-                const money = document.getElementById("money");
-                money.innerText = user.money;
-            })
-        }
+            method: "GET"
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(data => {
+            const user = JSON.parse(data)[0];
+            const money = document.getElementById("money");
+            money.innerText = user.money;
+            const bonus=document.getElementById("bonus");
+            bonus.innerText=user.bonus;
+        })
 
+        }
+        else {
+            authElements.forEach(item => item.style.display = "flex");
+            navElements.forEach(item => item.style.display = "none");
+        }
+        // hien thi logout
+        let checkMenu=false;
+        document.getElementById("trigger").addEventListener('click',function() {
+            checkMenu=!checkMenu;
+            if(checkMenu===true){
+                document.getElementById("menu").style.visibility="visible";
+            }
+            else{
+                document.getElementById("menu").style.visibility="hidden";
+            }
+
+        });
+        // xoa data nguoi dung duoc luu trong ls
         function logout() {
             localStorage.clear();
         }
@@ -93,14 +154,32 @@
     exchange_div.style.display='none';
     
 // 1. xu ly trang flight cua flow mua ve  
-    
+    // gui email
+   function emailSend(email,content,dateString,timeString){
+        Email.send({
+            Host : "smtp.elasticemail.com",
+            Username : "jadeuma235@gmail.com",
+            Password : "CB0F1191C63097515935CD75726D0430C710",
+            To : email,
+            From : "jadeuma235@gmail.com",
+            Subject : `Already Exchange an airplane ticket date: ${dateString} time : ${timeString}` ,
+            Body : content,
+            }).then(
+            message => {
+
+                console.log(message);
+            
+            }
+        );
+    }
     //function ownOldToNew
-    function ownOldToNew(ticket){
+    function ownOldToNew(new_id_string){
         const email = localStorage.getItem("email");
         if (email == null) {
             window.location = "http://localhost:8001/login";
             return;
         }
+        console.log(`owntonew old_id :${old_id_string}`);
       
         fetch(`/own/${old_id_string}`, {
             method: "GET",
@@ -111,12 +190,11 @@
         .then(data => {
             
             var own_data = JSON.parse(data);
-
+            
             var number=own_data[0].number;
             var expirationDate=own_data[0]['expiration_date'];
             var securityCode=own_data[0]['security_code'];
             var fullName=own_data[0]['full_name'];
-            let bonus = 0; // diem thuong moi cua nguoi dung
             
             const requestOptionsOwn = {
                 method: "POST",
@@ -124,9 +202,18 @@
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus}`
+                    `email=${email}&ticket_id=${new_id_string}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
             }
-
+            fetch(`/ticket/${new_id_string}`, {
+            method: "GET",
+            })
+             .then(response => {
+                     return(response.text());
+             })
+            .then(data => {
+            // console.log(data);
+                const ticket = JSON.parse(data)[0];
+                console.log(`hahaha  email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate} `);
             const content = `Exchange ticket confirmed\\nDear ${email},\\nCongratulations! Your boarding pass for ${ticket.airline}, Flight #${ticket.flight_id}, departing on ${ticket.date} at ${ticket.time}, from ${ticket.from} to ${ticket.to} has been secured. Your seat: ${ticket.seat}.\\nSafe travels!\\n\\nYour boarding pass number: ${ticket.ticket_id}`;
     
             const date = new Date();
@@ -145,6 +232,7 @@
                 body: 
                     `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
             }
+            emailSend(email,content,dateString,timeString);
             
             fetch("/own", requestOptionsOwn)
             .then(response => {
@@ -158,7 +246,11 @@
                     })
                     .then(status => {
                         if (status == 200) {
-                            alert("You have a new notification!");
+                            swal("Successful", "You have a new notification!", "success");
+                             const result= document.querySelector(".swal-button");
+                       result.addEventListener('click',function () {
+                        window.location.replace("http://localhost:8001/notifications");
+                       });
                             
                         }
                     })
@@ -167,6 +259,8 @@
                     alert("Error");
                 }
             })
+             })
+            
             
         });
             
@@ -174,7 +268,8 @@
             
             
     }
-    function deleteOld(ticket_new){
+
+    function deleteOld(){
         fetch(`/ticket/${old_id_string}`, {
             method: "GET",
         })
@@ -184,7 +279,7 @@
         .then(data => {
             console.log(data);
             var ticket_old=JSON.parse(data);
-            console.log(`3.${old_id_string}`);
+            
             
             fetch(`/own`, {
                 method: "DELETE",
@@ -199,7 +294,7 @@
             .then(status => {
                 if (status == 200) {
                     localStorage.removeItem('ticket_id_old');
-                    window.location.replace("http://localhost:8001/inventory");
+                    
                 }
                 else {
                     alert("Error");
@@ -213,12 +308,24 @@
     }
     //function exchange
     function exchange(ticketnew) {
+        
         ownOldToNew(ticketnew);
-        deleteOld(ticketnew)
+        deleteOld()
     }
 
     // function xu ly khi nguoi dung chon 
-    function pick(new_id_string){   
+    function pick(new_id_string){
+        fetch(`/ticket/${new_id_string}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            ticket = JSON.parse(data)[0];
+            hienTicket(ticket,false);
+        })
+
         exchange_div.onclick = function(){
          
             fetch(`/ticket/${new_id_string}`, {
@@ -230,9 +337,10 @@
             .then(data => {
                 console.log(data);
                 var ticket_new=JSON.parse(data);
+                console.log(`exchang ${ticket_new}`);
                 var result = confirm(`${data} Ban da chac chan?`);
                 if(result){
-                    exchange(ticket_new);
+                    exchange(new_id_string);
                 }
                 else{
                     window.location.reload();
@@ -310,9 +418,61 @@
             unread.innerText = JSON.parse(data)[0].count;
         })
 //2. xu ly trang flight cua doi ve 
-        
+    function hienTicket(ticket,oldCheck) {
+
+      
+            var flightId = document.getElementById("flightOld");
+            var from = document.getElementById("fromOld");
+            var to = document.getElementById("toOld");
+            var date = document.getElementById("dateOld");
+            var time = document.getElementById("timeOld");
+            var airline = document.getElementById("airlineOld");
+            var ticketId = document.getElementById("ticketOld");
+            var seat = document.getElementById("seatOld");
+            var price = document.getElementById("priceOld");
+        if(oldCheck===false){
+             flightId = document.getElementById("flightNew");
+             from = document.getElementById("fromNew");
+             to = document.getElementById("toNew");
+             date = document.getElementById("dateNew");
+             time = document.getElementById("timeNew");
+             airline = document.getElementById("airlineNew");
+             ticketId = document.getElementById("ticketNew");
+             seat = document.getElementById("seatNew");
+             price = document.getElementById("priceNew");
+
+        }
+        console.log(`render3 ${ticket.ticket_id}`);
+            flightId.innerText = ticket.flight_id;
+            from.innerText = ticket.from;
+            to.innerText = ticket.to;
+            date.innerText = ticket.date;
+            time.innerText = ticket.time;
+            airline.innerText = ticket.airline;
+            ticketId.innerText = ticket.ticket_id;
+            seat.innerText = ticket.seat;
+            price.innerText = ticket.price;
+        };
+
+        fetch(`/ticket/${old_id_string}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            ticket = JSON.parse(data)[0];
+            console.log(`reden ${data}`);
+            hienTicket(ticket,1);
+            
+        })
+        const ticketInformation = document.getElementById("ticket-information");
+        const main=document.getElementById("main");
         if(old_id_string.length!==null){
             exchange_div.style.display='block';
+            main.setAttribute('style','display:flex;');
+            ticketInformation.setAttribute('style','display:flex; align-items:center; gap:3vw; ');
+
 
         }
 

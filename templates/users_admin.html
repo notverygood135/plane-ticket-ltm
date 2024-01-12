@@ -5,17 +5,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <body>
+        <div id="navbar">
+            <div class="mainNav">
+                <div class="logo">
+                    <a href="http://localhost:8001/manage/flights">
+                        <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
+                    </a>
+                </div>
+                
+                <div id="navbar_list">
+                    
+                    <a href="http://localhost:8001/manage/flights">home</a>                   
+                    <a href="http://localhost:8001/manage/users">users</a>
+                    <a href="http://localhost:8001/manage/flights">flights</a>
+                    <a href="http://localhost:8001/manage/tickets" >tickets</a>
+                
+                </div>
+             </div>
+
+            <div  id="account" class="nav">
+                <div id="trigger"class="trigger" >
+                    <div class="hello">
+                        <h1>Hello <span id="email"></span></h1>
+                    </div>
+                 
+                </div>
+                <div id="menu" class="menu"><a href="http://localhost:8001" onclick="logout()" >logout</a></div>
+
+            </div> 
+        </div>
+    
         <div id="manage">
-            <div id="navbar">
-                <a href="http://localhost:8001">home</a>
-                <a href="http://localhost:8001/manage/users">users</a>
-                <a href="http://localhost:8001/manage/flights">flights</a>
-            </div>
+            
+
+
             <ul id="users"></ul>
         </div>
     </body>
     <script>
-        const email = localStorage.getItem("email");
+        // navbar
+const email = localStorage.getItem("email");
+        const authElements = document.querySelectorAll(".auth");
+        const navElements = document.querySelectorAll(".nav");
+        if (email != "" && email != null) {
+            document.getElementById("email").innerHTML = email;
+
+        }
+        else {
+            window.location.replace("http://localhost:8001");
+        }
+        // hien thi logout
+        let checkMenu=false;
+        document.getElementById("trigger").addEventListener('click',function() {
+            checkMenu=!checkMenu;
+            if(checkMenu===true){
+                document.getElementById("menu").style.visibility="visible";
+            }
+            else{
+                document.getElementById("menu").style.visibility="hidden";
+            }
+
+        });
+        // xoa data nguoi dung duoc luu trong ls
+        function logout() {
+            localStorage.clear();
+        }
+        // xoa LocalStorage.item ticket_id_old 
+        localStorage.removeItem('ticket_id_old');
+
+//
+       
         let users = [];
 
         if (email != "admin") {
