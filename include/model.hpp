@@ -12,6 +12,7 @@ vector<string> get_owned_tickets(string email);
 vector<string> get_ticket(string ticket_id);
 
 vector<string> get_ownership(string ticket_id);
+vector<string> get_ownerships();
 vector<string> create_ownership(string _email, string _ticket_id, string _full_name, string _number, string _security_code, string _expiration_date);
 vector<string> delete_ownership(string _ticket_id);
 
