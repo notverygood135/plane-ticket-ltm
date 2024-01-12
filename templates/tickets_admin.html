@@ -65,6 +65,22 @@
         //navbar
         // navbar
 const email = localStorage.getItem("email");
+fetch(`/user/${email}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            user = JSON.parse(data);
+           
+           localStorage.setItem('roll',user[0].type);
+        })
+      const roll =localStorage.getItem('roll');
+
+        if(roll==0){
+            window.location.replace('http://localhost:8001');
+        }
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
         if (email != "" && email != null) {
