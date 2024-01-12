@@ -141,6 +141,9 @@ vector<string> put(string route, string payload) {
     else if (parsed_route == "bonus") {
         return update_bonus(body[0], body[1]);
     }
+    else if(parsed_route =="money"){
+        return update_money(body[0],body[1]);
+    }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 

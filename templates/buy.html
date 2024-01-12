@@ -50,8 +50,17 @@
 
                 <label for="full-name">Card Holder Name</label>
                 <input type="text" name="full-name" id="full-name">
-                
-                <button type="button" onclick="submit()">Submit</button>
+                <div id="bonus-all">
+                    <label for="text-bonus">
+                        Bonus:
+                    </label>
+                    <div id="input-all">    
+                        <input type="text" name="text-bonus" id="text-bonus">
+                        
+                        <input type="checkbox" name="checkbox-bonus" id="checkbox-bonus">
+                    </div>    
+                </div>
+                <button type="button" onclick="submit()" id="submit-button">Submit</button>
             </div>
         </section>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -101,6 +110,8 @@
         const url = window.location.pathname;
         const id = url.split("/")[2];
         let ticket = null;
+        let bonusCheck=0;
+        let moneyCheck=0;
         function renderTicket(ticket) {
             const ticketInfo = document.getElementById("ticket-info");
             document.getElementById("flight").innerText = ticket.flight_id;
@@ -134,6 +145,50 @@
             const unread = document.getElementById("unread");
             unread.innerText = JSON.parse(data)[0].count;
         })
+
+        // control the input bonus
+        // Lắng nghe sự kiện khi ô đánh dấu thay đổi
+        document.getElementById('checkbox-bonus').checked=false;
+        document.getElementById('text-bonus').disabled=true;
+        let result =false;
+        document.getElementById('checkbox-bonus').addEventListener('change', function() {
+        // Khi ô đánh dấu thay đổi, kích hoạt hoặc vô hiệu hóa trường nhập văn bản
+        document.getElementById('text-bonus').disabled = !this.checked;
+        result=!result;
+  });
+   // khi nhap vao o , lay gia tri khi nhap vao hoac thay doi 
+   document.getElementById('text-bonus').addEventListener('change', function() {
+        // Khi ô đánh dấu thay đổi, kích hoạt hoặc vô hiệu hóa trường nhập văn bản
+        var bonus1= parseInt(document.getElementById('text-bonus').value,10);
+        if(result===true&&isNaN(bonus1)===false){
+            
+            fetch(`/user/${email}`, {
+            method: "GET"
+            })
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                const user = JSON.parse(data)[0];
+                var bonus=parseInt(user.bonus,10);
+            
+               console.log(`huhu ${bonus1} va ${bonus}`);
+                if(bonus1>bonus){
+                    alert('nhap lai');
+                }
+                else{
+                    bonusCheck=bonus1;
+                    moneyCheck=parseFloat(-bonus1*1.0);
+                    console.log(`haha2 ${bonus1} va ${moneyCheck} va ${typeof moneyCheck}`);
+                }
+                
+            });
+        }
+        else{
+            alert("nhap lai");
+        }
+  });
+        
    // gui email
    function emailSend(email,content,dateString,timeString){
         Email.send({
@@ -152,6 +207,31 @@
             }
         );
     }
+    //update bonus
+        function updateBonus(email,bonus){
+            fetch('/bonus',{
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "text/html"
+                    },
+                    body: 
+                        `email=${email}&bonus=${bonus.toString()}`
+                    });
+
+        }
+    //update money
+        function updateMoney(email,money){
+            fetch('/money',{
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "text/html"
+                    },
+                    body: 
+                        `email=${email}&money=${money.toString()}`
+                    });
+
+        };
+
         function submit() {
            
             const email = localStorage.getItem("email");
@@ -163,7 +243,6 @@
             let expirationDate = document.getElementById("expiration-date").value;
             let securityCode = document.getElementById("security-code").value;
             let fullName = document.getElementById("full-name").value;
-            let bonusAll = 0;
             
             console.log(`number: ${number}\nexpirationDate: ${expirationDate},\nsecurityCode: ${securityCode}\nfullName: ${fullName}`);
         
@@ -187,8 +266,9 @@
                     `email=${email}&content=${content}&date=${dateString}&time=${timeString}`
             };
 
-            emailSend(email,content,dateString,timeString);
+            // emailSend(email,content,dateString,timeString);
             
+           
             fetch(`/user/${email}`, {
             method: "GET"
             })
@@ -197,21 +277,21 @@
             })
             .then(data => {
                 const user = JSON.parse(data)[0];
-                bonusAll=parseInt(user.bonus,10)+Math.floor(ticket.price/100);
-                console.log(`1....... ${typeof bonusAll}`);
-                ownNotification(bonusAll);
-                
+                let bonusAll=parseInt(user.bonus,10)+Math.floor(ticket.price/100)-bonusCheck;
+                let moneyAll=moneyCheck;
+                console.log(`tong ${user.bonus} va ${ticket.price/100} va ${bonusCheck} va ${bonusAll}`);
+                console.log(`saasa ${moneyAll}`);
+                updateBonus(email,bonusAll);
+                updateMoney(email,moneyAll);
             });
 
-            function ownNotification(bonus) {
-                console.log(`2.......${bonus}`);
             fetch("/own", {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&bonus=${bonus.toString()}`
+                    `email=${email}&ticket_id=${id}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
             })
             .then(response => {
                 return(response.status);
@@ -238,7 +318,7 @@
                     swal("Error", "You clicked the button!", "error");
                 }
             })
-            }
+            
             
         
             
