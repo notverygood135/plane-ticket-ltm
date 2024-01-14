@@ -50,7 +50,7 @@ vector<string> get_user(string email) {
         response.push_back("");
         return response;
     }
-    sql = "SELECT email, money, type, bonus FROM users WHERE email = '";
+    sql = "SELECT email, password, money, type, bonus FROM users WHERE email = '";
     sql.append(email);
     sql.append("';");
     rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
@@ -158,6 +158,40 @@ vector<string> delete_user(string email) {
     sql.append(email);
     sql.append("');\n");
     sql.append("DELETE FROM own WHERE email = '");
+    sql.append(email);
+    sql.append("';");
+    cout << sql << endl;
+    rc = sqlite3_exec(db, sql.c_str(), callback, NULL, &err_msg);
+    if (rc != SQLITE_OK) {
+        cout << "error: " << err_msg << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sqlite3_close(db);
+    response.push_back("HTTP/1.1 200 OK\r\n\r\n");
+    response.push_back("");
+    return response;
+}
+vector<string> update_password(string _email, string _password) {
+    string email = split(_email, "=")[1];
+    string password = split(_password, "=")[1];
+    sqlite3 *db;
+    char *err_msg = 0;
+    int rc;
+    string sql;
+    vector<string> response;
+
+    rc = sqlite3_open("db/plane.db", &db);
+    if (rc) {
+        cout << "Cannot open database" << endl;
+        response.push_back("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        response.push_back("");
+        return response;
+    }
+    sql = "UPDATE users SET password = ";
+    sql.append(password);
+    sql.append(" WHERE email = '");
     sql.append(email);
     sql.append("';");
     cout << sql << endl;

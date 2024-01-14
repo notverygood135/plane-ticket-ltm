@@ -18,6 +18,8 @@ unordered_map<string, string> template_routes = {
     {"/manage/flights", "index_admin"},
     {"/manage/users", "users_admin"},
     {"/manage/tickets", "tickets_admin"},
+    {"/changepass","change_password"},
+    {"/resetpass","reset_password"},
 };
 
 vector<string> get(string route) {
@@ -132,12 +134,19 @@ vector<string> put(string route, string payload) {
     else if (parsed_route == "users") {
         return update_type(body[0], body[1]);
     }
+     else if (parsed_route == "password") {
+        return update_password(body[0],body[1]);
+    }
+    else if (parsed_route == "money") {
+        return update_money(body[0],body[1]);
+    }
     else if (parsed_route == "flights") {
         return update_flight(body[0], body[1], body[2]);
     }
     else if (parsed_route == "bonus") {
         return update_bonus(body[0], body[1]);
     }
+    
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
