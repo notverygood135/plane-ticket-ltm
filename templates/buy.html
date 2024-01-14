@@ -248,35 +248,31 @@
             Body : content,
             }).then(
             message => {
-
                 console.log(message);
-            
             }
         );
     }
     //update bonus
         function updateBonus(email,bonus){
             fetch('/bonus',{
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "text/html"
-                    },
-                    body: 
-                        `email=${email}&bonus=${bonus.toString()}`
-                    });
-
+                method: "PUT",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: 
+                    `email=${email}&bonus=${bonus.toString()}`
+            });
         }
     //update money
         function updateMoney(email,money){
             fetch('/money',{
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "text/html"
-                    },
-                    body: 
-                        `email=${email}&money=${money.toString()}`
-                    });
-
+                method: "PUT",
+                headers: {
+                    "Content-Type": "text/html"
+                },
+                body: 
+                    `email=${email}&money=${money.toString()}`
+            });
         };
 
         function submit() {

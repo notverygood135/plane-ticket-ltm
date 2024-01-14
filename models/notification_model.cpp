@@ -108,7 +108,6 @@ vector<string> get_unread_notifications_count(string email) {
     sql = "SELECT COUNT(notification_id) as count FROM notifications WHERE email = '";
     sql.append(email);
     sql.append("' AND read = 0;");
-    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -140,7 +139,6 @@ vector<string> update_notifications(string email) {
     sql = "UPDATE notifications SET read = 1 WHERE email = '";
     sql.append(email);
     sql.append("';");
-    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -183,6 +181,7 @@ vector<string> create_notification(string _email, string _content, string _date,
     sql.append("', '");
     sql.append(time);
     sql.append("', 0);");
+    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
@@ -214,7 +213,6 @@ vector<string> delete_notifications(string email) {
     sql = "DELETE FROM notifications WHERE email = '";
     sql.append(email);
     sql.append("';");
-    cout << sql << endl;
     rc = sqlite3_exec(db, sql.c_str(), notificationsCallback, NULL, &err_msg);
     if (rc != SQLITE_OK) {
         cout << "error: " << err_msg << endl;
