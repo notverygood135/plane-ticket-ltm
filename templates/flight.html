@@ -213,14 +213,23 @@
             var securityCode=own_data[0]['security_code'];
             var fullName=own_data[0]['full_name'];
             
+            const date = new Date();
+            const dateString = date.toISOString().split('T')[0];
+            const timeString = date.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: "numeric",
+                minute: "numeric"
+            });
+
             const requestOptionsOwn = {
                 method: "POST",
                 headers: {
                     "Content-Type": "text/html"
                 },
                 body: 
-                    `email=${email}&ticket_id=${new_id_string}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}`
+                    `email=${email}&ticket_id=${new_id_string}&full_name=${fullName}&number=${number}&security_code=${securityCode}&expiration_date=${expirationDate}&book_date=${dateString}`
             }
+
             fetch(`/ticket/${new_id_string}`, {
             method: "GET",
             })
