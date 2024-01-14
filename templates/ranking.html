@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" href="../static/ranking.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <head>
+        <link rel="stylesheet" href="../static/ranking.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    </head>
+
     <body>
-        <div id="navbar">
+    <div id="navbar">
+        <div class="mainNav">
             <div class="logo">
-                <a href="http://localhost:8001">
+                <a href="http://localhost:8001/manage/flights">
                     <img src="https://img.freepik.com/premium-vector/eagle-logo-design_7888-349.jpg?w=2000" ></img>
                 </a>
             </div>
             
             <div id="navbar_list">
                 
-                <a href="http://localhost:8001">home</a>
-                <a href="http://localhost:8001/login" class="auth">login</a>
-                <a href="http://localhost:8001/register" class="auth">register</a>
-                <a href="http://localhost:8001/inventory" class="nav">inventory</a>
-                <a href="http://localhost:8001/notifications" class="nav">notifications(<span id="unread"></span>)</a>
+                <a href="http://localhost:8001/manage/flights">home</a>                   
+                <a href="http://localhost:8001/manage/users">users</a>
+                <a href="http://localhost:8001/manage/flights">flights</a>
+                <a href="http://localhost:8001/manage/tickets" >tickets</a>
+                <a href="http://localhost:8001/ranking">ranking</a>
             
             </div>
+         </div>
 
-            <div class="account">
-                <div class="trigger" ><h1>Hello <span id="email"></span></h1>
-                    <div>Balance: $<span id="money"></span></div>
-                    <div>Bonus: <span id="bonus"></span></div>
-                
+        <div  id="account" class="nav">
+            <div id="trigger"class="trigger" >
+                <div class="hello">
+                    <h1>Hello <span id="email"></span></h1>
                 </div>
-                <div class="menu"><a href="http://localhost:8001" onclick="logout()" class="nav">logout</a></div>
-
+             
             </div>
+            <div id="menu" class="menu"><a href="http://localhost:8001" onclick="logout()" >logout</a>
+                <a href="http://localhost:8001/changepass"> Change password</a></div>
+
+        </div> 
+    </div>
+  
         <div id="users-column">
             <span>Email</span>
             <span>Tickets bought this month</span>
@@ -39,56 +48,61 @@
             <ul id="users"></ul>
         </div>
 
-    </body>
+    
 
     <script>
         const userTicketCount = {};
 
-        // hien thi elements tuy thuoc vao trang thai dang nhap
-        const email = localStorage.getItem("email");
+        //navbar
+        // navbar
+const email = localStorage.getItem("email");
+fetch(`/user/${email}`, {
+            method: "GET",
+        })
+        .then(response => {
+            return(response.text());
+        })
+        .then(data => {
+            user = JSON.parse(data);
+           
+           localStorage.setItem('roll',user[0].type);
+        })
+      const roll =localStorage.getItem('roll');
+
+        if(roll==0){
+            window.location.replace('http://localhost:8001');
+        }
         const authElements = document.querySelectorAll(".auth");
         const navElements = document.querySelectorAll(".nav");
         if (email != "" && email != null) {
             document.getElementById("email").innerHTML = email;
-            authElements.forEach(item => item.style.display = "none");
-            navElements.forEach(item => item.style.display = "flex");
-
-            fetch(`/unread/${email}`, {
-                method: "GET",
-            })
-            .then(response => {
-                return(response.text());
-            })
-            .then(data => {
-                const user = JSON.parse(data)[0];
-                const unread = document.getElementById("unread");
-                unread.innerText = user.count;
-            })
-            fetch(`/user/${email}`, {
-            method: "GET"
-        })
-        .then(response => {
-            return response.text();
-        })
-        .then(data => {
-            const user = JSON.parse(data)[0];
-            const money = document.getElementById("money");
-            money.innerText = user.money;
-            const bonus=document.getElementById("bonus");
-            bonus.innerText=user.bonus;
-        })
 
         }
         else {
-            authElements.forEach(item => item.style.display = "flex");
-            navElements.forEach(item => item.style.display = "none");
+            window.location.replace("http://localhost:8001");
         }
+        // hien thi logout
+        let checkMenu=false;
+        document.getElementById("trigger").addEventListener('click',function() {
+            checkMenu=!checkMenu;
+            if(checkMenu===true){
+                document.getElementById("menu").style.visibility="visible";
+            }
+            else{
+                document.getElementById("menu").style.visibility="hidden";
+            }
 
+        });
         // xoa data nguoi dung duoc luu trong ls
         function logout() {
             localStorage.clear();
         }
+        // xoa LocalStorage.item ticket_id_old 
+        localStorage.removeItem('ticket_id_old');
 
+
+        //
+        
         fetch("/owns", {
             method: "GET",
         })
@@ -130,4 +144,5 @@
             });
         }
     </script>
+    </body>
 </html>

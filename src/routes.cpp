@@ -137,16 +137,15 @@ vector<string> put(string route, string payload) {
      else if (parsed_route == "password") {
         return update_password(body[0],body[1]);
     }
-    else if (parsed_route == "money") {
-        return update_money(body[0],body[1]);
-    }
     else if (parsed_route == "flights") {
         return update_flight(body[0], body[1], body[2]);
     }
     else if (parsed_route == "bonus") {
         return update_bonus(body[0], body[1]);
     }
-    
+    else if (parsed_route == "money") {
+        return update_money(body[0], body[1]);
+    }
     return {"HTTP/1.1 500 Internal Server Error\r\n\r\n"};
 }
 
@@ -185,7 +184,6 @@ vector<string> req(string method, string route, string payload) {
         string static_file = split(route, "/")[split(route, "/").size() - 1];
         route = "static/";
         route.append(static_file);
-        cout << route << endl;
         response.push_back("HTTP/1.1 200 OK\r\n\r\n");
         response.push_back(route);
         return response;
